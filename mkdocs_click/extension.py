@@ -1,18 +1,18 @@
+import re
+from typing import List
 
 from markdown import Markdown
 from markdown.extensions import Extension
 from markdown.preprocessors import Preprocessor
-
-import re
 
 from mkdocs_click.parser import generate_command_docs
 
 
 class ClickProcessor(Preprocessor):
 
-    PATTERN = re.compile(r'^:::click module=([:a-zA-Z0-9_.]+):([:a-zA-Z0-9_.]+)::: *$')
+    PATTERN = re.compile(r"^:::click module=([:a-zA-Z0-9_.]+):([:a-zA-Z0-9_.]+)::: *$")
 
-    def run(self, lines: [str]) -> [str]:
+    def run(self, lines: List[str]) -> List[str]:
         new_lines = []
         for line in lines:
             m = self.PATTERN.search(line)
@@ -29,8 +29,8 @@ class MKClickExtension(Extension):
     def extendMarkdown(self, md: Markdown) -> None:
         md.registerExtension(self)
         processor = ClickProcessor(md.parser)
-        md.preprocessors.register(processor, "mk_clik", 141)
+        md.preprocessors.register(processor, "mk_click", 141)
 
 
-def makeExtension():
+def makeExtension() -> Extension:
     return MKClickExtension()
