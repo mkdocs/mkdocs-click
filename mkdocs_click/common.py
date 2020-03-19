@@ -1,0 +1,2 @@
+class MKClickConfigException(Exception):
+    pass

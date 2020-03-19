@@ -5,10 +5,13 @@ from setuptools import setup
 
 VERSION = '0.0.1'
 
-REQUIRES = []
+REQUIRES = [
+    "click",
+    "markdown"
+]
 
 setup(
-    name='mkdocs-click',
+    name='mkdocs_click',
     version=VERSION,
     description='An mkdocs extension to document click methods',
     keywords='mkdocs datadog click',
@@ -21,7 +24,7 @@ setup(
     python_requires='>=3.0',
     include_package_data=True,
     entry_points={
-        'markdown.extensions': ['mkdocs-click = mkdocs_click.:MKClickExtension']
+        'markdown.extensions': ['mkdocs-click = mkdocs_click:MKClickExtension']
     }
 )
 
