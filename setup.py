@@ -5,7 +5,8 @@ from setuptools import setup
 
 VERSION = "0.1.0"
 
-REQUIRES = ["click", "markdown"]
+with open("requirements.in", 'r') as req:
+    REQUIRES = req.read().splitlines()
 
 setup(
     name="mkdocs_click",

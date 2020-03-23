@@ -1,6 +1,6 @@
 import logging
 import traceback
-from typing import Dict, List
+from typing import Dict, List, Union
 
 import click
 from click import Command
@@ -128,7 +128,18 @@ def _parse_recursively(
     return [l.replace("\b", "") for l in lines]
 
 
-def generate_command_docs(path: str, command: str) -> List[str]:
+def generate_command_docs(block_options: Dict[str, str]) -> List[str]:
     """Entry point for generating markdown doumentation for a given command."""
-    click_command = _load_command(path, command)
-    return _parse_recursively(command, click_command)
+
+    required_options = ('module', 'command')
+    for option in required_options:
+        if option not in block_options:
+            raise MKClickConfigException(
+                'Parameter {} is required for mkdocs-click. Provided configuration was {}'.format(option, block_options)
+            )
+
+    module_path = block_options['module']
+    command = block_options['command']
+    depth = int(block_options.get('depth', 0))
+    click_command = _load_command(module_path, command)
+    return _parse_recursively(command, click_command, level=depth)
