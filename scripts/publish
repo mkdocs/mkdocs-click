@@ -1,0 +1,17 @@
+#! /bin/sh -e
+
+PACKAGE="mkdocs_click"
+BIN="venv/bin/"
+
+if [ "$GITHUB_ACTIONS" ]; then
+  VERSION=`${BIN}python -c "import $PACKAGE; print($PACKAGE.__version__)"`
+
+  if [ "${GITHUB_REF}" != "refs/tags/${VERSION}" ]; then
+    echo "GitHub ref '${GITHUB_REF}' does not match package version '${VERSION}'"
+    exit 1
+  fi
+fi
+
+set -x
+
+${BIN}twine upload dist/*
