@@ -1,6 +1,8 @@
 # mkdocs-click
 
 ![Tests](https://github.com/DataDog/mkdocs-click/workflows/Tests/badge.svg?branch=master)
+![Python versions](https://img.shields.io/pypi/pyversions/mkdocs-click.svg)
+[![Package version](https://badge.fury.io/py/mkdocs-click.svg)](https://pypi.org/project/mkdocs-click)
 
 An MkDocs extension to generate documentation for Click command line applications.
 
