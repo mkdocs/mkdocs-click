@@ -1,5 +1,9 @@
 -e .
 
+# Packaging
+twine
+wheel
+
 # Linters
 black
 flake8
