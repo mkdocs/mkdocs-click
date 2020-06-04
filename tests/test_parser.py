@@ -1,11 +1,12 @@
 # (C) Datadog, Inc. 2020-present
 # All rights reserved
 # Licensed under the Apache license (see LICENSE)
+from contextlib import nullcontext
 from pathlib import Path
 
 import pytest
 
-from mkdocs_click.parser import _make_header, _make_title, _load_command, MKClickConfigException, _parse_recursively
+from mkdocs_click.parser import _make_header, _make_title, _load_command, MKClickConfigException, _make_command_docs
 
 
 def test__make_header():
@@ -13,25 +14,31 @@ def test__make_header():
     assert _make_header("foo", 3) == "#### foo"
 
 
-def test___make_title():
-    assert _make_title("foo", 0) == ["# foo", ""]
-    assert _make_title("foo", 2) == ["### foo", ""]
+def test__make_title():
+    assert list(_make_title("foo", 0)) == ["# foo", ""]
+    assert list(_make_title("foo", 2)) == ["### foo", ""]
 
 
-def test__load_command():
-    _load_command("tests.click.cli", "cli")
-    with pytest.raises(MKClickConfigException):
-        _load_command("tests.click.cli", "not_a_command")
-    with pytest.raises(MKClickConfigException):
-        _load_command("not_a_module", "cli")
+@pytest.mark.parametrize(
+    "module, command, exc",
+    [
+        pytest.param("tests.click.cli", "cli", None, id="ok"),
+        pytest.param("tests.click.cli", "doesnotexist", MKClickConfigException, id="command-does-not-exist"),
+        pytest.param("doesnotexist", "cli", MKClickConfigException, id="module-does-not-exist"),
+    ],
+)
+def test__load_command(module: str, command: str, exc):
+    with pytest.raises(exc) if exc is not None else nullcontext():
+        _load_command(module, command)
 
 
-def test_parse():
+@pytest.mark.parametrize("level", range(6))
+def test_parse(level: int):
     expected = (Path(__file__).parent / "click" / "docs.txt").read_text()
+    expected = expected.replace("# ", f"{'#' * (level + 1)} ")
+    expected = f"{expected}\n"  # Include final newline.
 
     click_command = _load_command("tests.click.cli", "cli")
-    for i in range(6):
-        docs = _parse_recursively("cli", click_command, level=i)
-        assert docs == expected.splitlines()
-        # Update content to go one level deeper.
-        expected = expected.replace("# ", "## ")
+
+    docs = list(_make_command_docs("cli", click_command, level=level))
+    assert docs == expected.splitlines()

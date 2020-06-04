@@ -1,19 +1,18 @@
 # (C) Datadog, Inc. 2020-present
 # All rights reserved
 # Licensed under the Apache license (see LICENSE)
+"""
+Inspired by the click plugin for Sphinx, see: https://github.com/click-contrib/sphinx-click
+
+This module contains all the required functions to parse a Click command recursively.
+"""
 import logging
 import traceback
-from typing import cast, Dict, List, Optional
+from typing import cast, Dict, List, Optional, Iterator
 
 import click
-from click import Command
 
 logger = logging.getLogger(f"MARKDOWN.{__name__}")
-
-"""
-Inspired by the click plugin for sphinx https://github.com/click-contrib/sphinx-click
-This file contains all the required functions to parse a given click command recursively.
-"""
 
 
 class MKClickConfigException(Exception):
@@ -46,29 +45,40 @@ def _load_command(module_path: str, module_name: str) -> click.BaseCommand:
     return parser
 
 
+def _get_lazyload_commands(multicommand: click.MultiCommand, ctx: click.Context) -> Dict[str, click.Command]:
+    """Obtain click.Command references to the subcommands of a given command."""
+    commands = {}
+
+    for name in multicommand.list_commands(ctx):
+        command = multicommand.get_command(ctx, name)
+        assert command is not None
+        commands[name] = command
+
+    return commands
+
+
 def _make_header(text: str, level: int) -> str:
     """Create a markdown header at a given level"""
     return f"{'#' * (level + 1)} {text}"
 
 
-def _make_title(prog_name: str, level: int) -> List[str]:
+def _make_title(prog_name: str, level: int) -> Iterator[str]:
     """Create the first markdown lines describing a command."""
-    return [_make_header(prog_name, level), ""]
+    yield _make_header(prog_name, level)
+    yield ""
 
 
-def _make_description(ctx: click.Context) -> List[str]:
+def _make_description(ctx: click.Context) -> Iterator[str]:
     """Create markdown lines based on the command's own description."""
-    lines = []
     help_string = ctx.command.help or ctx.command.short_help
+
     if help_string:
-        lines.extend([f"{l}" for l in help_string.splitlines()])
-        lines.append("")
-
-    return lines
+        yield from help_string.splitlines()
+        yield ""
 
 
-def _make_usage(ctx: click.Context) -> List[str]:
-    """Create the markdown lines from the command usage string."""
+def _make_usage(ctx: click.Context) -> Iterator[str]:
+    """Create the Markdown lines from the command usage string."""
 
     # Gets the usual 'Usage' string without the prefix.
     formatter = ctx.make_formatter()
@@ -84,44 +94,43 @@ def _make_usage(ctx: click.Context) -> List[str]:
         current = current.parent
 
     full_path.reverse()
+    usage_snippet = " ".join(full_path) + usage
 
-    return ["Usage:", "```", " ".join(full_path) + usage, "```"]
+    yield "Usage:"
+    yield ""
+    yield "```"
+    yield usage_snippet
+    yield "```"
+    yield ""
 
 
-def _make_options(ctx: click.Context) -> List[str]:
-    """Create the markdown lines describing the options for the command."""
+def _make_options(ctx: click.Context) -> Iterator[str]:
+    """Create the Markdown lines describing the options for the command."""
     formatter = ctx.make_formatter()
-    Command.format_options(ctx.command, ctx, formatter)
+    click.Command.format_options(ctx.command, ctx, formatter)
     # First line is redundant "Options"
     # Last line is `--help`
     option_lines = formatter.getvalue().splitlines()[1:-1]
     if not option_lines:
-        return []
+        return
 
-    return ["Options:", "```code", *option_lines, "```"]
-
-
-def _get_lazyload_commands(multicommand: click.MultiCommand, ctx: click.Context) -> Dict[str, click.Command]:
-    """Obtain click.Command references to the subcommands of a given command."""
-    commands = {}
-
-    for name in multicommand.list_commands(ctx):
-        command = multicommand.get_command(ctx, name)
-        assert command is not None
-        commands[name] = command
-
-    return commands
+    yield "Options:"
+    yield ""
+    yield "```code"
+    yield from option_lines
+    yield "```"
+    yield ""
 
 
 def _parse_recursively(
     prog_name: str, command: click.BaseCommand, parent: click.Context = None, level: int = 0
-) -> List[str]:
+) -> Iterator[str]:
     ctx = click.Context(cast(click.Command, command), parent=parent)
-    lines = []
-    lines.extend(_make_title(prog_name, level))
-    lines.extend(_make_description(ctx))
-    lines.extend(_make_usage(ctx))
-    lines.extend(_make_options(ctx))
+
+    yield from _make_title(prog_name, level)
+    yield from _make_description(ctx)
+    yield from _make_usage(ctx)
+    yield from _make_options(ctx)
 
     # Get subcommands
     lookup = getattr(ctx.command, "commands", {})
@@ -130,12 +139,16 @@ def _parse_recursively(
     commands = sorted(lookup.values(), key=lambda item: item.name)
 
     for command in commands:
-        lines.extend(_parse_recursively(command.name, command, parent=ctx, level=level + 1))
-    return [l.replace("\b", "") for l in lines]
+        yield from _parse_recursively(command.name, command, parent=ctx, level=level + 1)
+
+
+def _make_command_docs(prog_name: str, command: click.BaseCommand, level: int = 0) -> Iterator[str]:
+    for line in _parse_recursively(prog_name, command, level=level):
+        yield line.replace("\b", "")
 
 
 def generate_command_docs(block_options: Dict[str, str]) -> List[str]:
-    """Entry point for generating markdown doumentation for a given command."""
+    """Entry point for generating Markdown doumentation for a given command."""
 
     required_options = ("module", "command")
     for option in required_options:
@@ -147,5 +160,6 @@ def generate_command_docs(block_options: Dict[str, str]) -> List[str]:
     module_path = block_options["module"]
     command = block_options["command"]
     depth = int(block_options.get("depth", 0))
-    click_command = _load_command(module_path, command)
-    return _parse_recursively(command, click_command, level=depth)
+    command_obj = _load_command(module_path, command)
+
+    return list(_make_command_docs(command, command_obj, level=depth))
