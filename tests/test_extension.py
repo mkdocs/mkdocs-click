@@ -1,3 +1,6 @@
+# (C) Datadog, Inc. 2020-present
+# All rights reserved
+# Licensed under the Apache license (see LICENSE)
 from mkdocs_click.extension import ClickProcessor
 
 

@@ -1,3 +1,6 @@
+# (C) Datadog, Inc. 2020-present
+# All rights reserved
+# Licensed under the Apache license (see LICENSE)
 import re
 from typing import List
 
@@ -5,7 +8,7 @@ from markdown import Markdown
 from markdown.extensions import Extension
 from markdown.preprocessors import Preprocessor
 
-from mkdocs_click.parser import generate_command_docs
+from .parser import generate_command_docs
 
 
 class ClickProcessor(Preprocessor):

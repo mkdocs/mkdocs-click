@@ -1,3 +1,6 @@
+# (C) Datadog, Inc. 2020-present
+# All rights reserved
+# Licensed under the Apache license (see LICENSE)
 import logging
 import traceback
 from typing import cast, Dict, List, Optional
