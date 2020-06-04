@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 import pytest
 
@@ -24,13 +24,11 @@ def test__load_command():
 
 
 def test_parse():
-    with open(os.path.join('click', 'docs.txt')) as f:
-        expected = f.read()
+    expected = (Path(__file__).parent / "click" / "docs.txt").read_text()
 
     click_command = _load_command("tests.click.cli", "cli")
     for i in range(6):
         docs = _parse_recursively("cli", click_command, level=i)
         assert docs == expected.splitlines()
         # Update content to go one level deeper.
-        expected = expected.replace('# ', '## ')
-
+        expected = expected.replace("# ", "## ")

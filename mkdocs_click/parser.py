@@ -1,6 +1,6 @@
 import logging
 import traceback
-from typing import Dict, List, Union
+from typing import cast, Dict, List, Optional
 
 import click
 from click import Command
@@ -44,17 +44,17 @@ def _load_command(module_path: str, module_name: str) -> click.BaseCommand:
 
 
 def _make_header(text: str, level: int) -> str:
-    """Creates a markdown header at a given level"""
+    """Create a markdown header at a given level"""
     return f"{'#' * (level + 1)} {text}"
 
 
 def _make_title(prog_name: str, level: int) -> List[str]:
-    """Creates the first markdown lines describing a command."""
+    """Create the first markdown lines describing a command."""
     return [_make_header(prog_name, level), ""]
 
 
 def _make_description(ctx: click.Context) -> List[str]:
-    """Creates markdown lines based on the command's own description."""
+    """Create markdown lines based on the command's own description."""
     lines = []
     help_string = ctx.command.help or ctx.command.short_help
     if help_string:
@@ -65,7 +65,7 @@ def _make_description(ctx: click.Context) -> List[str]:
 
 
 def _make_usage(ctx: click.Context) -> List[str]:
-    """Creates the markdown lines from the command usage string."""
+    """Create the markdown lines from the command usage string."""
 
     # Gets the usual 'Usage' string without the prefix.
     formatter = ctx.make_formatter()
@@ -75,7 +75,7 @@ def _make_usage(ctx: click.Context) -> List[str]:
 
     # Generate the full usage string based on parents if any i.e. `ddev meta snmp ...`
     full_path = []
-    current = ctx
+    current: Optional[click.Context] = ctx
     while current is not None:
         full_path.append(current.command.name)
         current = current.parent
@@ -86,7 +86,7 @@ def _make_usage(ctx: click.Context) -> List[str]:
 
 
 def _make_options(ctx: click.Context) -> List[str]:
-    """Creates the markdown lines describing the options for the command"""
+    """Create the markdown lines describing the options for the command."""
     formatter = ctx.make_formatter()
     Command.format_options(ctx.command, ctx, formatter)
     # First line is redundant "Options"
@@ -98,11 +98,14 @@ def _make_options(ctx: click.Context) -> List[str]:
     return ["Options:", "```code", *option_lines, "```"]
 
 
-def _get_lazyload_commands(multicommand: click.MultiCommand) -> Dict[str, click.Command]:
-    """Obtains click.Command references to the subcommands of a given command"""
+def _get_lazyload_commands(multicommand: click.MultiCommand, ctx: click.Context) -> Dict[str, click.Command]:
+    """Obtain click.Command references to the subcommands of a given command."""
     commands = {}
-    for command in multicommand.list_commands(multicommand):
-        commands[command] = multicommand.get_command(multicommand, command)
+
+    for name in multicommand.list_commands(ctx):
+        command = multicommand.get_command(ctx, name)
+        assert command is not None
+        commands[name] = command
 
     return commands
 
@@ -110,7 +113,7 @@ def _get_lazyload_commands(multicommand: click.MultiCommand) -> Dict[str, click.
 def _parse_recursively(
     prog_name: str, command: click.BaseCommand, parent: click.Context = None, level: int = 0
 ) -> List[str]:
-    ctx = click.Context(command, parent=parent)
+    ctx = click.Context(cast(click.Command, command), parent=parent)
     lines = []
     lines.extend(_make_title(prog_name, level))
     lines.extend(_make_description(ctx))
@@ -120,7 +123,7 @@ def _parse_recursively(
     # Get subcommands
     lookup = getattr(ctx.command, "commands", {})
     if not lookup and isinstance(ctx.command, click.MultiCommand):
-        lookup = _get_lazyload_commands(ctx.command)
+        lookup = _get_lazyload_commands(ctx.command, ctx)
     commands = sorted(lookup.values(), key=lambda item: item.name)
 
     for command in commands:
@@ -131,15 +134,15 @@ def _parse_recursively(
 def generate_command_docs(block_options: Dict[str, str]) -> List[str]:
     """Entry point for generating markdown doumentation for a given command."""
 
-    required_options = ('module', 'command')
+    required_options = ("module", "command")
     for option in required_options:
         if option not in block_options:
             raise MKClickConfigException(
-                'Parameter {} is required for mkdocs-click. Provided configuration was {}'.format(option, block_options)
+                "Parameter {} is required for mkdocs-click. Provided configuration was {}".format(option, block_options)
             )
 
-    module_path = block_options['module']
-    command = block_options['command']
-    depth = int(block_options.get('depth', 0))
+    module_path = block_options["module"]
+    command = block_options["command"]
+    depth = int(block_options.get("depth", 0))
     click_command = _load_command(module_path, command)
     return _parse_recursively(command, click_command, level=depth)

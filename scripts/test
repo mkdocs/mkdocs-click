@@ -1,0 +1,8 @@
+#! /bin/sh -e
+
+VENV="venv"
+BIN="$VENV/bin/"
+
+set -x
+
+${BIN}pytest "$@"

@@ -11,13 +11,14 @@ foo
 ::: mkdocs-click
 bar
 """.splitlines()
+
     expected = """
 # Some content
 foo
 > mocked_data
 bar""".splitlines()
 
-    generate_docs.return_value = ['> mocked_data']
+    generate_docs.return_value = ["> mocked_data"]
     processed = click_processor.run(data)
     assert processed == expected
 
@@ -36,7 +37,7 @@ bar
     expected = """
 # Some content
 foo
-{'option1': ' value1', 'optiøn2': ' value2', 'option3': '', 'option4': ''}
+{'option1': 'value1', 'optiøn2': 'value2', 'option3': '', 'option4': ''}
 bar
 """.splitlines()
 
@@ -70,4 +71,3 @@ bar
     generate_docs.side_effect = lambda _: []
     processed = click_processor.run(data)
     assert processed == expected  # no change
-

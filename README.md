@@ -1,32 +1,35 @@
-# mkdocs-ext-click
-Extensions for mkdocs to read and parse click commands.
+# mkdocs-click
 
-## Usage
+An MkDocs extension to generate documentation for Click command line applications.
 
-Install the extension from the repo. At the moment there is no version of it on PyPI.
+## Installation
+
+This package is not available on PyPI yet, but you can install it from git:
 
 ```bash
-git clone https://github.com/DataDog/mkdocs-click.git
-cd mkdocs-click
-pip install .
+pip install git+https://github.com/DataDog/mkdocs-click.git
 ```
 
-If you use tox or a dynamic environment, you can add the following line to your requirements:
-```bash
-git+https://github.com/DataDog/mkdocs-click.git
-```
+## Quickstart
 
-Adds this to the `markdown_extensions` in your mkdocs.yml file:
+Register the extension in your `mkdocs.yml` configuration:
 
 ```yaml
+# mkdocs.yml
 markdown_extensions:
     - mkdocs-click
 ```
 
-And finally to document a given click method, add this to any of your markdown file:
+To document a given Click command, add this in the body of a Markdown file:
 
 ```markdown
-:::click module=<MODULE_PATH>:<CLICK_FUNCTION>:::
+:::click module=<MODULE_PATH>:<COMMAND>:::
 ```
 
-replacing `<MODULE_PATH>` and `<CLICK_METHOD>` as needed.
+Be sure to replace `<MODULE_PATH>` and `<COMMAND>` as appropriate.
+
+Example:
+
+```markdown
+:::click module=app.cli:build:::
+```

@@ -10,8 +10,8 @@ from mkdocs_click.parser import generate_command_docs
 
 class ClickProcessor(Preprocessor):
 
-    PATTERN_PLUGIN_IDENTIFIER = re.compile(r'^::: mkdocs-click')
-    PATTERN_PLUGIN_OPTIONS = re.compile(r'^(?:\t|\s{4}):(.+):(\s\S+|\s*)$')
+    PATTERN_PLUGIN_IDENTIFIER = re.compile(r"^::: mkdocs-click")
+    PATTERN_PLUGIN_OPTIONS = re.compile(r"^(?:\t|\s{4}):(.+):(\s\S+|\s*)$")
 
     def run(self, lines: List[str]) -> List[str]:
         new_lines = []
