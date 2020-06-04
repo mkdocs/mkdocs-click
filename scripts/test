@@ -6,3 +6,5 @@ BIN="$VENV/bin/"
 set -x
 
 ${BIN}pytest "$@"
+
+scripts/style
