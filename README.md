@@ -1,5 +1,7 @@
 # mkdocs-click
 
+![Tests](https://github.com/DataDog/mkdocs-click/workflows/Tests/badge.svg?branch=master)
+
 An MkDocs extension to generate documentation for Click command line applications.
 
 ## Installation
