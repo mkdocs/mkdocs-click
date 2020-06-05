@@ -8,10 +8,10 @@ An MkDocs extension to generate documentation for Click command line application
 
 ## Installation
 
-This package is not available on PyPI yet, but you can install it from git:
+Install from PyPI:
 
 ```bash
-pip install git+https://github.com/DataDog/mkdocs-click.git
+pip install mkdocs-click
 ```
 
 ## Quickstart
