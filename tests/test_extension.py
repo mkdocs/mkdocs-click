@@ -1,76 +1,72 @@
 # (C) Datadog, Inc. 2020-present
 # All rights reserved
 # Licensed under the Apache license (see LICENSE)
-from mkdocs_click.extension import ClickProcessor
+from pathlib import Path
+from textwrap import dedent
+
+import pytest
+from markdown import Markdown
+
+import mkdocs_click
+
+EXPECTED = (Path(__file__).parent / "app" / "expected.md").read_text()
 
 
-click_processor = ClickProcessor()
+def test_extension():
+    """
+    Markdown output for a relatively complex Click application is correct.
+    """
+    md = Markdown(extensions=[mkdocs_click.makeExtension()])
+
+    source = dedent(
+        """
+        ::: mkdocs-click
+            :module: tests.app.cli
+            :command: cli
+        """
+    )
+
+    assert md.convert(source) == md.convert(EXPECTED)
 
 
-def test_no_options(generate_docs):
-    data = """
-# Some content
-foo
-::: mkdocs-click
-bar
-""".splitlines()
+def test_depth():
+    """
+    The :depth: attribute increases the level of headers.
+    """
+    md = Markdown(extensions=[mkdocs_click.makeExtension()])
 
-    expected = """
-# Some content
-foo
-> mocked_data
-bar""".splitlines()
+    source = dedent(
+        """
+        # CLI Reference
 
-    generate_docs.return_value = ["> mocked_data"]
-    processed = click_processor.run(data)
-    assert processed == expected
+        ::: mkdocs-click
+            :module: tests.app.cli
+            :command: cli
+            :depth: 1
+        """
+    )
 
+    expected = f"# CLI Reference\n\n{EXPECTED.replace('# ', '## ')}"
 
-def test_options(generate_docs):
-    data = """
-# Some content
-foo
-::: mkdocs-click
-    :option1: value1
-    :optiøn2: value2
-\t:option3:
-    :option4:\x20
-bar
-""".splitlines()
-    expected = """
-# Some content
-foo
-{'option1': 'value1', 'optiøn2': 'value2', 'option3': '', 'option4': ''}
-bar
-""".splitlines()
-
-    generate_docs.side_effect = lambda mapping: [str(mapping)]
-    processed = click_processor.run(data)
-    assert processed == expected
+    assert md.convert(source) == md.convert(expected)
 
 
-def test_do_not_affect_other_blocks(generate_docs):
-    data = """
-# Some content
-::: mkdocs-click
-::: plugin1
-    :option1: value1
-::: mkdocs-click
-    :option: value
-::: plugin2
-    :option2: value2
-bar
-""".splitlines()
+@pytest.mark.parametrize("option", ["module", "command"])
+def test_required_options(option):
+    """
+    The module and command options are required.
+    """
+    md = Markdown(extensions=[mkdocs_click.makeExtension()])
 
-    expected = """
-# Some content
-::: plugin1
-    :option1: value1
-::: plugin2
-    :option2: value2
-bar
-""".splitlines()
+    source = dedent(
+        """
+        ::: mkdocs-click
+            :module: tests.app.cli
+            :command: cli
+        """
+    )
 
-    generate_docs.side_effect = lambda _: []
-    processed = click_processor.run(data)
-    assert processed == expected  # no change
+    source = source.replace(f":{option}:", ":somethingelse:")
+
+    with pytest.raises(mkdocs_click.MkDocsClickException):
+        md.convert(source)
