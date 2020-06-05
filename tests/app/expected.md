@@ -30,14 +30,12 @@ cli bar hello [OPTIONS]
 
 Options:
 
-```code
+```
   --count INTEGER  Number of greetings.
   --name TEXT      The person to greet.
 ```
 
 ## foo
-
-The foo command
 
 Usage:
 
