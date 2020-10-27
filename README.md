@@ -104,6 +104,7 @@ The syntax for `mkdocs-click` blocks is the following:
 ::: mkdocs-click
     :module: <MODULE>
     :command: <COMMAND>
+    :prog_name <PROG_NAME>
     :depth: <DEPTH>
 ```
 
@@ -111,4 +112,5 @@ Options:
 
 - `module`: path to the module where the command object is located.
 - `command`: name of the command object.
+- `prog_name`: _(Optional, default: same as `command`)_ the name to display for the command.
 - `depth`: _(Optional, default: `0`)_ Offset to add when generating headers.
