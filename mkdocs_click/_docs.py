@@ -106,13 +106,24 @@ def _make_options(ctx: click.Context) -> Iterator[str]:
     click.Command.format_options(ctx.command, ctx, formatter)
     # First line is redundant "Options"
     # Last line is `--help`
-    option_lines = formatter.getvalue().splitlines()[1:-1]
-    if not option_lines:
+    fragments = [elem.lstrip(" ").rstrip("\n") for elem in formatter.buffer[1:-1] if not elem.isspace()][:-1]
+    # This line assumes that help messages do not start with a hyphen.
+    indices_option = list(map(lambda x: x[0], filter(lambda x: x[1].startswith("-"), enumerate(fragments))))
+    options = [
+        # Appending None to List[int] is necessary because we need to include the last element of fragments
+        # while using slicing.
+        fragments[i:j]
+        for i, j in zip(indices_option, indices_option[1:] + [None])  # type: ignore[list-item]
+    ]
+    if not options:
         return
 
-    yield "Options:"
+    yield "**Options:**"
     yield ""
-    yield "```"
-    yield from option_lines
-    yield "```"
+    yield "| Option | Description |"
+    yield "| ------ | ----------- |"
+    for option in options:
+        # This might result in a bad appearance if help messagge is written in
+        # languages that don't separate words by whitespaces (e.g., Chinese, Japanese and Thai)
+        yield f"| `{option[0]}` | {' '.join(option[1:]) if len(option) > 1 else ''} |"
     yield ""
