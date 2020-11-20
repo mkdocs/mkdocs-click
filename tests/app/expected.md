@@ -28,12 +28,12 @@ Usage:
 cli bar hello [OPTIONS]
 ```
 
-Options:
+**Options:**
 
-```
-  --count INTEGER  Number of greetings.
-  --name TEXT      The person to greet.
-```
+| Option | Description |
+| ------ | ----------- |
+| `--count INTEGER` | Number of greetings. |
+| `--name TEXT` | The person to greet. |
 
 ## foo
 

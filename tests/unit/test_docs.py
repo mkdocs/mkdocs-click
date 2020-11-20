@@ -28,12 +28,11 @@ HELLO_EXPECTED = dedent(
     hello [OPTIONS]
     ```
 
-    Options:
+    **Options:**
 
-    ```
-      -d, --debug TEXT  Include debug output
-    ```
-
+    | Option | Description |
+    | ------ | ----------- |
+    | `-d, --debug TEXT` | Include debug output |
     """
 ).strip()
 
@@ -90,11 +89,11 @@ def test_custom_multicommand():
         multi hello [OPTIONS]
         ```
 
-        Options:
+        **Options:**
 
-        ```
-          -d, --debug TEXT  Include debug output
-        ```
+        | Option | Description |
+        | ------ | ----------- |
+        | `-d, --debug TEXT` | Include debug output |
         """
     ).lstrip()
 
