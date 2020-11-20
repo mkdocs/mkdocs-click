@@ -2,7 +2,7 @@
 
 Main entrypoint for this dummy program
 
-Usage:
+**Usage:**
 
 ```
 cli [OPTIONS] COMMAND [ARGS]...
@@ -12,7 +12,7 @@ cli [OPTIONS] COMMAND [ARGS]...
 
 The bar command
 
-Usage:
+**Usage:**
 
 ```
 cli bar [OPTIONS] COMMAND [ARGS]...
@@ -22,7 +22,7 @@ cli bar [OPTIONS] COMMAND [ARGS]...
 
 Simple program that greets NAME for a total of COUNT times.
 
-Usage:
+**Usage:**
 
 ```
 cli bar hello [OPTIONS]
@@ -37,7 +37,7 @@ Options:
 
 ## foo
 
-Usage:
+**Usage:**
 
 ```
 cli foo [OPTIONS]
