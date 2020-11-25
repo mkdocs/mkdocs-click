@@ -102,28 +102,14 @@ def _make_usage(ctx: click.Context) -> Iterator[str]:
 
 def _make_options(ctx: click.Context) -> Iterator[str]:
     """Create the Markdown lines describing the options for the command."""
-    formatter = ctx.make_formatter()
-    click.Command.format_options(ctx.command, ctx, formatter)
-    # First line is redundant "Options"
-    # Last line is `--help`
-    fragments = [elem.lstrip(" ").rstrip("\n") for elem in formatter.buffer[1:-1] if not elem.isspace()][:-1]
-    # This line assumes that help messages do not start with a hyphen.
-    indices_option = list(map(lambda x: x[0], filter(lambda x: x[1].startswith("-"), enumerate(fragments))))
-    options = [
-        # Appending None to List[int] is necessary because we need to include the last element of fragments
-        # while using slicing.
-        fragments[i:j]
-        for i, j in zip(indices_option, indices_option[1:] + [None])  # type: ignore[list-item]
-    ]
-    if not options:
+    options = [param.get_help_record(ctx) for param in ctx.command.get_params(ctx) if isinstance(param, click.Option)]
+    if options[0][0] == "--help":
         return
 
     yield "**Options:**"
     yield ""
     yield "| Option | Description |"
     yield "| ------ | ----------- |"
-    for option in options:
-        # This might result in a bad appearance if help messagge is written in
-        # languages that don't separate words by whitespaces (e.g., Chinese, Japanese and Thai)
-        yield f"| `{option[0]}` | {' '.join(option[1:]) if len(option) > 1 else ''} |"
+    for option in options[:-1]:
+        yield f"| `{option[0]}` | {option[1]} |"
     yield ""
