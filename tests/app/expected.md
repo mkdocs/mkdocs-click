@@ -30,10 +30,10 @@ cli bar hello [OPTIONS]
 
 **Options:**
 
-| Option | Description |
-| ------ | ----------- |
-| `--count INTEGER` | Number of greetings. |
-| `--name TEXT` | The person to greet. |
+| Option | Type | Description | Required | Default |
+| ------ | ---- | ----------- | -------- | ------- |
+| `--count` | INTEGER | Number of greetings. |  | `1` |
+| `--name` | TEXT | The person to greet. |  |  |
 
 ## foo
 

@@ -1,7 +1,7 @@
 # (C) Datadog, Inc. 2020-present
 # All rights reserved
 # Licensed under the Apache license (see LICENSE)
-from typing import Iterator, List, Optional, cast
+from typing import Iterator, List, Optional, cast, Iterable
 
 import click
 
@@ -102,14 +102,41 @@ def _make_usage(ctx: click.Context) -> Iterator[str]:
 
 def _make_options(ctx: click.Context) -> Iterator[str]:
     """Create the Markdown lines describing the options for the command."""
-    options = [param.get_help_record(ctx) for param in ctx.command.get_params(ctx) if isinstance(param, click.Option)]
-    if options[0][0] == "--help":
+
+    def backquote(opts: Iterable[str]) -> List[str]:
+        return [f"`{opt}`" for opt in opts]
+
+    def format_possible_value(opt: click.Option) -> str:
+        param_type = opt.type
+
+        if isinstance(param_type, click.Choice):
+            return f"{param_type.name.upper()} ({' &#x7C; '.join(backquote(param_type.choices))})"
+        elif isinstance(param_type, click.DateTime):
+            return f"{param_type.name.upper()} ({' &#x7C; '.join(backquote(param_type.formats))})"
+        elif isinstance(param_type, (click.IntRange, click.FloatRange)):
+            if param_type.min is not None and param_type.max is not None:
+                return f"{param_type.name.upper()} (between `{param_type.min}` and `{param_type.max}`)"
+            elif param_type.min is not None:
+                return f"{param_type.name.upper()} (`{param_type.min}` and above)"
+            else:
+                return f"{param_type.name.upper()} (`{param_type.max}` and below)"
+        else:
+            return param_type.name.upper()
+
+    params = [param for param in ctx.command.get_params(ctx) if isinstance(param, click.Option)]
+
+    if params[0].opts[0] == "--help":
         return
 
     yield "**Options:**"
     yield ""
-    yield "| Option | Description |"
-    yield "| ------ | ----------- |"
-    for option in options[:-1]:
-        yield f"| `{option[0]}` | {option[1]} |"
+    yield "| Option | Type | Description | Required | Default |"
+    yield "| ------ | ---- | ----------- | -------- | ------- |"
+    for param in params[:-1]:
+        options = f"{', '.join(backquote(param.opts))}{'/{}'.format(', '.join(backquote(param.secondary_opts))) if param.secondary_opts != [] else ''}"  # noqa: E501
+        value_type = format_possible_value(param)
+        description = param.help if param.help is not None else "No description given"
+        required = "&#x2714;" if param.required else ""
+        default = f"`{param.default}`" if param.default is not None else ""
+        yield f"| {options} | {value_type} | {description} | {required} | {default} |"
     yield ""

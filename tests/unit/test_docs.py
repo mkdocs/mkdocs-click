@@ -30,9 +30,9 @@ HELLO_EXPECTED = dedent(
 
     **Options:**
 
-    | Option | Description |
-    | ------ | ----------- |
-    | `-d, --debug TEXT` | Include debug output |
+    | Option | Type | Description | Required | Default |
+    | ------ | ---- | ----------- | -------- | ------- |
+    | `-d`, `--debug` | TEXT | Include debug output |  |  |
     """
 ).strip()
 
@@ -91,9 +91,9 @@ def test_custom_multicommand():
 
         **Options:**
 
-        | Option | Description |
-        | ------ | ----------- |
-        | `-d, --debug TEXT` | Include debug output |
+        | Option | Type | Description | Required | Default |
+        | ------ | ---- | ----------- | -------- | ------- |
+        | `-d`, `--debug` | TEXT | Include debug output |  |  |
         """
     ).lstrip()
 
