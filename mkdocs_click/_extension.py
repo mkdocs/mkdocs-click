@@ -19,11 +19,12 @@ def replace_command_docs(**options: Any) -> Iterator[str]:
 
     module = options["module"]
     command = options["command"]
+    prog_name = options.get("prog_name", command)
     depth = int(options.get("depth", 0))
 
     command_obj = load_command(module, command)
 
-    return make_command_docs(prog_name=command, command=command_obj, level=depth)
+    return make_command_docs(prog_name=prog_name, command=command_obj, level=depth)
 
 
 class ClickProcessor(Preprocessor):
