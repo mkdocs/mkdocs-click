@@ -17,6 +17,14 @@ cd mkdocs-click
 scripts/install
 ```
 
+## Example docs site
+
+You can run the example docs site that lives in `example/` locally using:
+
+```bash
+scripts/docs serve
+```
+
 ## Testing and linting
 
 Once dependencies are installed, you can run the test suite using:
