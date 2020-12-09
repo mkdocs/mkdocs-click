@@ -104,7 +104,7 @@ The syntax for `mkdocs-click` blocks is the following:
 ::: mkdocs-click
     :module: <MODULE>
     :command: <COMMAND>
-    :prog_name <PROG_NAME>
+    :prog_name: <PROG_NAME>
     :depth: <DEPTH>
 ```
 
