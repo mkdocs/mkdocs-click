@@ -44,7 +44,7 @@ def test_prog_name():
         """
     )
 
-    expected = EXPECTED.replace('# cli', '# custom')
+    expected = EXPECTED.replace("# cli", "# custom")
 
     assert md.convert(source) == md.convert(expected)
 
