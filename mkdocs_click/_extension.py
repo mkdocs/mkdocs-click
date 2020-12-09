@@ -3,7 +3,6 @@
 # Licensed under the Apache license (see LICENSE)
 from typing import Any, List, Iterator
 
-from markdown import Markdown
 from markdown.extensions import Extension
 from markdown.preprocessors import Preprocessor
 
@@ -44,7 +43,7 @@ class MKClickExtension(Extension):
     by Markdown documentation generated from the specified Click application.
     """
 
-    def extendMarkdown(self, md: Markdown) -> None:
+    def extendMarkdown(self, md: Any) -> None:
         md.registerExtension(self)
         processor = ClickProcessor(md.parser)
         md.preprocessors.register(processor, "mk_click", 141)
