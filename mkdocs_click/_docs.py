@@ -130,13 +130,12 @@ def _make_options(ctx: click.Context) -> Iterator[str]:
 
     yield "**Options:**"
     yield ""
-    yield "| Option | Type | Description | Required | Default |"
-    yield "| ------ | ---- | ----------- | -------- | ------- |"
+    yield "| Name | Type | Description | Default |"
+    yield "| ------ | ---- | ----------- | ------- |"
     for param in params[:-1]:
         options = f"{', '.join(backquote(param.opts))}{'/{}'.format(', '.join(backquote(param.secondary_opts))) if param.secondary_opts != [] else ''}"  # noqa: E501
         value_type = format_possible_value(param)
         description = param.help if param.help is not None else "No description given"
-        required = "&#x2714;" if param.required else ""
-        default = f"`{param.default}`" if param.default is not None else ""
-        yield f"| {options} | {value_type} | {description} | {required} | {default} |"
+        default = f"`{param.default}`" if param.default is not None else "_required_"
+        yield f"| {options} | {value_type} | {description} | {default} |"
     yield ""
