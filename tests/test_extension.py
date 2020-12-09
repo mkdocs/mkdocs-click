@@ -29,6 +29,26 @@ def test_extension():
     assert md.convert(source) == md.convert(EXPECTED)
 
 
+def test_prog_name():
+    """
+    The :prog_name: attribute determines the name to display for the command.
+    """
+    md = Markdown(extensions=[mkdocs_click.makeExtension()])
+
+    source = dedent(
+        """
+        ::: mkdocs-click
+            :module: tests.app.cli
+            :command: cli
+            :prog_name: custom
+        """
+    )
+
+    expected = EXPECTED.replace('# cli', '# custom')
+
+    assert md.convert(source) == md.convert(expected)
+
+
 def test_depth():
     """
     The :depth: attribute increases the level of headers.
