@@ -31,7 +31,7 @@ setup(
     author_email="packages@datadoghq.com",
     license="Apache",
     packages=["mkdocs_click"],
-    install_requires=["click", "markdown"],
+    install_requires=["click==7.*", "markdown==3.*"],
     python_requires=">=3.7",
     include_package_data=True,
     zip_safe=False,
