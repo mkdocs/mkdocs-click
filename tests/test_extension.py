@@ -11,21 +11,36 @@ from markdown import Markdown
 EXPECTED = (Path(__file__).parent / "app" / "expected.md").read_text()
 
 
-def test_extension():
+@pytest.mark.parametrize(
+    "attr",
+    [
+        pytest.param(("cli", "cli"), id="cli-simple"),
+        pytest.param(("cli_named", "cli"), id="cli-explicit-name"),
+        pytest.param(("multi_named", "multi"), id="multi-explicit-name"),
+        pytest.param(("multi", "multi"), id="no-name"),
+    ],
+)
+def test_extension(attr):
     """
     Markdown output for a relatively complex Click application is correct.
     """
+    (command, expected_name) = attr
+
     md = Markdown(extensions=[mkdocs_click.makeExtension()])
 
     source = dedent(
         """
         ::: mkdocs-click
             :module: tests.app.cli
-            :command: cli
+            :command: {{cli}}
         """
     )
 
-    assert md.convert(source) == md.convert(EXPECTED)
+    source = source.replace("{{cli}}", command)
+
+    expected = EXPECTED.replace("cli", expected_name)
+
+    assert md.convert(source) == md.convert(expected)
 
 
 def test_prog_name():

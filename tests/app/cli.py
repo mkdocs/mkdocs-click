@@ -3,7 +3,6 @@
 # Licensed under the Apache license (see LICENSE)
 import click
 
-
 NOT_A_COMMAND = "not-a-command"
 
 
@@ -19,6 +18,11 @@ def cli():
     """Main entrypoint for this dummy program"""
 
 
+@click.group(name="cli")
+def cli_named():
+    """Main entrypoint for this dummy program"""
+
+
 @click.command()
 def foo():  # No description
     pass  # pragma: no cover
@@ -30,5 +34,22 @@ def bar():
 
 
 bar.add_command(hello)
+
 cli.add_command(foo)
 cli.add_command(bar)
+
+cli_named.add_command(foo)
+cli_named.add_command(bar)
+
+
+class MultiCLI(click.MultiCommand):
+    def list_commands(self, ctx):
+        return ["foo", "bar"]
+
+    def get_command(self, ctx, name):
+        cmds = {"foo": foo, "bar": bar}
+        return cmds.get(name, None)
+
+
+multi_named = MultiCLI(name="multi", help="Main entrypoint for this dummy program")
+multi = MultiCLI(help="Main entrypoint for this dummy program")

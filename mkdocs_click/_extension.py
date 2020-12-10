@@ -1,7 +1,7 @@
 # (C) Datadog, Inc. 2020-present
 # All rights reserved
 # Licensed under the Apache license (see LICENSE)
-from typing import Any, List, Iterator
+from typing import Any, Iterator, List
 
 from markdown.extensions import Extension
 from markdown.preprocessors import Preprocessor
@@ -19,10 +19,12 @@ def replace_command_docs(**options: Any) -> Iterator[str]:
 
     module = options["module"]
     command = options["command"]
-    prog_name = options.get("prog_name", command)
+    prog_name = options.get("prog_name", None)
     depth = int(options.get("depth", 0))
 
     command_obj = load_command(module, command)
+
+    prog_name = prog_name or command_obj.name or command
 
     return make_command_docs(prog_name=prog_name, command=command_obj, level=depth)
 
