@@ -5,7 +5,6 @@ from textwrap import dedent
 
 import click
 import pytest
-
 from mkdocs_click._docs import make_command_docs
 from mkdocs_click._exceptions import MkDocsClickException
 
@@ -50,7 +49,7 @@ def test_depth():
 
 def test_prog_name():
     output = "\n".join(make_command_docs("hello-world", hello)).strip()
-    assert output == HELLO_EXPECTED.replace("# hello", "# hello-world")
+    assert output == HELLO_EXPECTED.replace("hello", "hello-world")
 
 
 class MultiCLI(click.MultiCommand):

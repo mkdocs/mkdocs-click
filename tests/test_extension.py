@@ -4,10 +4,9 @@
 from pathlib import Path
 from textwrap import dedent
 
+import mkdocs_click
 import pytest
 from markdown import Markdown
-
-import mkdocs_click
 
 EXPECTED = (Path(__file__).parent / "app" / "expected.md").read_text()
 
@@ -44,7 +43,7 @@ def test_prog_name():
         """
     )
 
-    expected = EXPECTED.replace("# cli", "# custom")
+    expected = EXPECTED.replace("cli", "custom")
 
     assert md.convert(source) == md.convert(expected)
 

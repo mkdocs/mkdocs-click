@@ -1,11 +1,9 @@
 # (C) Datadog, Inc. 2020-present
 # All rights reserved
 # Licensed under the Apache license (see LICENSE)
-from typing import Iterator, List, Optional, cast
+from typing import Iterator, List, cast
 
 import click
-
-from ._exceptions import MkDocsClickException
 
 
 def make_command_docs(prog_name: str, command: click.BaseCommand, level: int = 0) -> Iterator[str]:
@@ -18,7 +16,7 @@ def _recursively_make_command_docs(
     prog_name: str, command: click.BaseCommand, parent: click.Context = None, level: int = 0
 ) -> Iterator[str]:
     """Create the raw Markdown lines for a command and its sub-commands."""
-    ctx = click.Context(cast(click.Command, command), parent=parent)
+    ctx = click.Context(cast(click.Command, command), info_name=prog_name, parent=parent)
 
     yield from _make_title(prog_name, level)
     yield from _make_description(ctx)
@@ -79,23 +77,10 @@ def _make_usage(ctx: click.Context) -> Iterator[str]:
     formatter.write_usage(ctx.command_path, " ".join(pieces), prefix="")
     usage = formatter.getvalue().rstrip("\n")
 
-    # Generate the full usage string based on parents if any, i.e. `root sub1 sub2 ...`.
-    full_path = []
-    current: Optional[click.Context] = ctx
-    while current is not None:
-        name = current.command.name
-        if name is None:
-            raise MkDocsClickException(f"command {current.command} has no `name`")
-        full_path.append(name)
-        current = current.parent
-
-    full_path.reverse()
-    usage_snippet = " ".join(full_path) + usage
-
     yield "Usage:"
     yield ""
     yield "```"
-    yield usage_snippet
+    yield usage
     yield "```"
     yield ""
 
