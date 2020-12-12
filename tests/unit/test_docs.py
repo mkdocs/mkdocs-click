@@ -22,7 +22,7 @@ HELLO_EXPECTED = dedent(
 
     Hello, world!
 
-    **Usage:**
+    __Usage:__
 
     ```
     hello [OPTIONS]
@@ -74,7 +74,7 @@ def test_custom_multicommand():
 
         Multi help
 
-        **Usage:**
+        __Usage:__
 
         ```
         multi [OPTIONS] COMMAND [ARGS]...
@@ -84,7 +84,7 @@ def test_custom_multicommand():
 
         Hello, world!
 
-        **Usage:**
+        __Usage:__
 
         ```
         multi hello [OPTIONS]

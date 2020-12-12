@@ -92,7 +92,7 @@ def _make_usage(ctx: click.Context) -> Iterator[str]:
     full_path.reverse()
     usage_snippet = " ".join(full_path) + usage
 
-    yield "**Usage:**"
+    yield "__Usage:__"
     yield ""
     yield "```"
     yield usage_snippet

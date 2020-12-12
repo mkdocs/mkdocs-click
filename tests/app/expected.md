@@ -22,7 +22,7 @@ cli bar [OPTIONS] COMMAND [ARGS]...
 
 Simple program that greets NAME for a total of COUNT times.
 
-**Usage:**
+__Usage:__
 
 ```
 cli bar hello [OPTIONS]
@@ -37,7 +37,7 @@ Options:
 
 ## foo
 
-**Usage:**
+__Usage:__
 
 ```
 cli foo [OPTIONS]
