@@ -28,7 +28,7 @@ Usage:
 cli bar hello [OPTIONS]
 ```
 
-Options:
+__Options:__
 
 ```
   --count INTEGER  Number of greetings.
