@@ -114,3 +114,4 @@ Options:
 - `command`: name of the command object.
 - `prog_name`: _(Optional, default: same as `command`)_ the name to display for the command.
 - `depth`: _(Optional, default: `0`)_ Offset to add when generating headers.
+- `option-style`: _(Optional, default: `plain`)_ style for the option section. The possible choices are `plain` and `table`.
