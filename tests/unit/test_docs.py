@@ -28,7 +28,7 @@ HELLO_EXPECTED = dedent(
     hello [OPTIONS]
     ```
 
-    __Options:__
+    Options:
 
     ```
       -d, --debug TEXT  Include debug output
@@ -55,9 +55,9 @@ def test_prog_name():
 
 def test_make_command_docs_invalid():
     with pytest.raises(
-        ValueError, match="invalid is not a valid option style, which must be either 'plain' or 'table'."
+        MkDocsClickException, match="invalid is not a valid option style, which must be either 'plain' or 'table'."
     ):
-        "\n".join(make_command_docs("hello", hello, styles={"option": "invalid"})).strip()
+        "\n".join(make_command_docs("hello", hello, style="invalid")).strip()
 
 
 @click.command()
@@ -83,22 +83,22 @@ HELLO_TABLE_EXPECTED = dedent(
     hello-table [OPTIONS]
     ```
 
-    __Options:__
+    Options:
 
     | Name | Type | Description | Default |
     | ------ | ---- | ----------- | ------- |
-    | `-d`, `--debug` | TEXT | Include debug output | _required_ |
-    | `--choice` | CHOICE (`foo` &#x7C; `bar`) | No description given | `foo` |
-    | `--date` | DATETIME (`%Y-%m-%d`) | No description given | _required_ |
-    | `--range-a` | FLOAT RANGE (between `0` and `1`) | No description given | `0` |
-    | `--range-b` | FLOAT RANGE (`0` and above) | No description given | _required_ |
-    | `--range-c` | FLOAT RANGE (`1` and below) | No description given | `0` |
+    | `-d`, `--debug` | text | Include debug output | _required_ |
+    | `--choice` | choice (`foo` &#x7C; `bar`) | No description given | `foo` |
+    | `--date` | datetime (`%Y-%m-%d`) | No description given | _required_ |
+    | `--range-a` | float range (between `0` and `1`) | No description given | `0` |
+    | `--range-b` | float range (`0` and above) | No description given | _required_ |
+    | `--range-c` | float range (`1` and below) | No description given | `0` |
     """
 ).strip()
 
 
 def test_make_command_docs_table():
-    output = "\n".join(make_command_docs("hello", hello_table, styles={"option": "table"})).strip()
+    output = "\n".join(make_command_docs("hello", hello_table, style="table")).strip()
     assert output == HELLO_TABLE_EXPECTED
 
 
@@ -123,7 +123,7 @@ HELLO_ONLY_HELP_EXPECTED = dedent(
 
 
 def test_make_command_docs_only_help():
-    output = "\n".join(make_command_docs("hello", hello_only_help, styles={"option": "table"})).strip()
+    output = "\n".join(make_command_docs("hello", hello_only_help, style="table")).strip()
     assert output == HELLO_ONLY_HELP_EXPECTED
 
 
@@ -164,7 +164,7 @@ def test_custom_multicommand():
         multi hello [OPTIONS]
         ```
 
-        __Options:__
+        Options:
 
         ```
           -d, --debug TEXT  Include debug output

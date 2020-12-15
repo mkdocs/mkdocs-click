@@ -21,11 +21,11 @@ def replace_command_docs(**options: Any) -> Iterator[str]:
     command = options["command"]
     prog_name = options.get("prog_name", command)
     depth = int(options.get("depth", 0))
-    styles = {"option": options.get("option-style", "plain")}
+    style = options.get("option-style", "plain")
 
     command_obj = load_command(module, command)
 
-    return make_command_docs(prog_name=prog_name, command=command_obj, level=depth, styles=styles)
+    return make_command_docs(prog_name=prog_name, command=command_obj, level=depth, style=style)
 
 
 class ClickProcessor(Preprocessor):
