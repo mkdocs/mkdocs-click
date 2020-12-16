@@ -67,6 +67,7 @@ def test_make_command_docs_invalid():
 @click.option("--range-a", type=click.FloatRange(0, 1), default=0)
 @click.option("--range-b", type=click.FloatRange(0))
 @click.option("--range-c", type=click.FloatRange(None, 1), default=0)
+@click.option("--flag/--no-flag")
 def hello_table():
     """Hello, world!"""
 
@@ -93,6 +94,7 @@ HELLO_TABLE_EXPECTED = dedent(
     | `--range-a` | float range (between `0` and `1`) | No description given | `0` |
     | `--range-b` | float range (`0` and above) | No description given | _required_ |
     | `--range-c` | float range (`1` and below) | No description given | `0` |
+    | `--flag` / `--no-flag` | boolean | No description given | `False` |
     """
 ).strip()
 
