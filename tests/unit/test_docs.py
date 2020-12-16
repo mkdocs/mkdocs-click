@@ -55,7 +55,7 @@ def test_prog_name():
 
 def test_make_command_docs_invalid():
     with pytest.raises(
-        MkDocsClickException, match="invalid is not a valid option style, which must be either 'plain' or 'table'."
+        MkDocsClickException, match="invalid is not a valid option style, which must be either `plain` or `table`."
     ):
         "\n".join(make_command_docs("hello", hello, style="invalid")).strip()
 

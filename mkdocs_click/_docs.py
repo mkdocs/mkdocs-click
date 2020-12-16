@@ -110,7 +110,7 @@ def _make_options(ctx: click.Context, style: str = "plain") -> Iterator[str]:
     elif style == "table":
         return _make_table_options(ctx)
     else:
-        raise MkDocsClickException(f"{style} is not a valid option style, which must be either 'plain' or 'table'.")
+        raise MkDocsClickException(f"{style} is not a valid option style, which must be either `plain` or `table`.")
 
 
 def _make_plain_options(ctx: click.Context) -> Iterator[str]:
