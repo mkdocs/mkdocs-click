@@ -166,9 +166,9 @@ def _make_table_options(ctx: click.Context) -> Iterator[str]:
     yield "| ------ | ---- | ----------- | ------- |"
     for param in params[:-1]:
         names = ", ".join(backquote(param.opts))
-        names_negeation = f" / {', '.join(backquote(param.secondary_opts))}" if param.secondary_opts != [] else ""
+        names_negation = f" / {', '.join(backquote(param.secondary_opts))}" if param.secondary_opts != [] else ""
         value_type = format_possible_value(param)
         description = param.help if param.help is not None else "N/A"
         default = f"`{param.default}`" if param.default is not None else "_required_"
-        yield f"| {names}{names_negeation} | {value_type} | {description} | {default} |"
+        yield f"| {names}{names_negation} | {value_type} | {description} | {default} |"
     yield ""
