@@ -89,12 +89,12 @@ HELLO_TABLE_EXPECTED = dedent(
     | Name | Type | Description | Default |
     | ------ | ---- | ----------- | ------- |
     | `-d`, `--debug` | text | Include debug output | _required_ |
-    | `--choice` | choice (`foo` &#x7C; `bar`) | No description given | `foo` |
-    | `--date` | datetime (`%Y-%m-%d`) | No description given | _required_ |
-    | `--range-a` | float range (between `0` and `1`) | No description given | `0` |
-    | `--range-b` | float range (`0` and above) | No description given | _required_ |
-    | `--range-c` | float range (`1` and below) | No description given | `0` |
-    | `--flag` / `--no-flag` | boolean | No description given | `False` |
+    | `--choice` | choice (`foo` &#x7C; `bar`) | N/A | `foo` |
+    | `--date` | datetime (`%Y-%m-%d`) | N/A | _required_ |
+    | `--range-a` | float range (between `0` and `1`) | N/A | `0` |
+    | `--range-b` | float range (`0` and above) | N/A | _required_ |
+    | `--range-c` | float range (`1` and below) | N/A | `0` |
+    | `--flag` / `--no-flag` | boolean | N/A | `False` |
     """
 ).strip()
 
