@@ -90,9 +90,9 @@ This allows you to generate documentation for an entire CLI application by point
 
 By default, `mkdocs-click` generates Markdown headers starting at `<h1>` for the root command section. This is generally what you want when the documentation should fill the entire page.
 
-If you are inserting documentation within other Markdown content, you can set the `:depth:` option to tweak the initial header level.
+If you are inserting documentation within other Markdown content, you can set the `:depth:` option to tweak the initial header level. Note that this applies even if you are just adding a heading.
 
-By default it is set to `0`, i.e. headers start at `<h1>`. If set to `1`, headers will start at `<h2>`, and so on.
+By default it is set to `0`, i.e. headers start at `<h1>`. If set to `1`, headers will start at `<h2>`, and so on. Note that if you insert your own first level heading and leave depth at its default value of 0, the page will have multiple `<h1>` tags, which is not compatible with themes that generate page-internal menus such as the ReadTheDocs and mkdocs-material themes.
 
 ## Reference
 
