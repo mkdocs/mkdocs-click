@@ -21,7 +21,7 @@ def replace_command_docs(**options: Any) -> Iterator[str]:
     command = options["command"]
     prog_name = options.get("prog_name", command)
     depth = int(options.get("depth", 0))
-    style = options.get("option-style", "plain")
+    style = options.get("style", "plain")
 
     command_obj = load_command(module, command)
 

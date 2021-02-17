@@ -1,7 +1,7 @@
 # (C) Datadog, Inc. 2020-present
 # All rights reserved
 # Licensed under the Apache license (see LICENSE)
-from typing import Iterable, Iterator, List, Optional, cast
+from typing import Iterator, List, Optional, cast
 
 import click
 
@@ -30,7 +30,7 @@ def _recursively_make_command_docs(
     subcommands = _get_sub_commands(ctx.command, ctx)
 
     for command in sorted(subcommands, key=lambda cmd: cmd.name):
-        yield from _recursively_make_command_docs(command.name, command, parent=ctx, level=level + 1)
+        yield from _recursively_make_command_docs(command.name, command, parent=ctx, level=level + 1, style=style)
 
 
 def _get_sub_commands(command: click.Command, ctx: click.Context) -> List[click.Command]:
@@ -135,42 +135,80 @@ def _make_plain_options(ctx: click.Context) -> Iterator[str]:
     yield ""
 
 
+# Unicode "Vertical Line" character (U+007C), HTML-compatible.
+# "\|" (escaped pipe) would work, too, but linters don't like it in literals.
+# https://stackoverflow.com/questions/23723396/how-to-show-the-pipe-symbol-in-markdown-table
+_HTML_PIPE = "&#x7C;"
+
+
+def _format_table_option_type(option: click.Option) -> str:
+    typename = option.type.name
+
+    # TODO: remove "# type: ignore" comments once https://github.com/python/typeshed/pull/4813 gets merged and released.
+
+    if isinstance(option.type, click.Choice):
+        # @click.option(..., type=click.Choice(["A", "B", "C"]))
+        # -> choices (`A` | `B` | `C`)
+        choices = f" {_HTML_PIPE} ".join(f"`{choice}`" for choice in option.type.choices)
+        return f"{typename} ({choices})"
+
+    if isinstance(option.type, click.DateTime):
+        # @click.option(..., type=click.DateTime(["A", "B", "C"]))
+        # -> datetime (`%Y-%m-%d` | `%Y-%m-%dT%H:%M:%S` | `%Y-%m-%d %H:%M:%S`)
+        formats = f" {_HTML_PIPE} ".join(f"`{fmt}`" for fmt in option.type.formats)  # type: ignore[attr-defined]
+        return f"{typename} ({formats})"
+
+    if isinstance(option.type, (click.IntRange, click.FloatRange)):
+        if option.type.min is not None and option.type.max is not None:  # type: ignore[union-attr]
+            # @click.option(..., type=click.IntRange(min=0, max=10))
+            # -> integer range (between `0` and `10`)
+            return f"{typename} (between `{option.type.min}` and `{option.type.max}`)"  # type: ignore[union-attr]
+        elif option.type.min is not None:  # type: ignore[union-attr]
+            # @click.option(..., type=click.IntRange(min=0))
+            # -> integer range (`0` and above)
+            return f"{typename} (`{option.type.min}` and above)"  # type: ignore[union-attr]
+        else:
+            # @click.option(..., type=click.IntRange(max=10))
+            # -> integer range (`10` and below)
+            return f"{typename} (`{option.type.max}` and below)"  # type: ignore[union-attr]
+
+    # -> "boolean", "text", etc.
+    return typename
+
+
+def _format_table_option_row(option: click.Option) -> str:
+    # Example: @click.option("-V, --version/--show-version", is_flag=True, help="Show version info.")
+
+    # -> "`-V`, `--version`"
+    names = ", ".join(f"`{opt}`" for opt in option.opts)
+
+    if option.secondary_opts:
+        # -> "`-V`, `--version` / `--show-info`"
+        names += " / "
+        names += ", ".join(f"`{opt}`" for opt in option.secondary_opts)
+
+    # -> "boolean"
+    value_type = _format_table_option_type(option)
+
+    # -> "Show version info."
+    description = option.help if option.help is not None else "N/A"
+
+    # -> `False`
+    default = f"`{option.default}`" if option.default is not None else "_required_"
+
+    # -> "| `-V`, `--version` / `--show-version` | boolean | Show version info. | `False` |"
+    return f"| {names} | {value_type} | {description} | {default} |"
+
+
 def _make_table_options(ctx: click.Context) -> Iterator[str]:
     """Create the table style options description."""
 
-    def backquote(opts: Iterable[str]) -> List[str]:
-        return [f"`{opt}`" for opt in opts]
-
-    def format_possible_value(opt: click.Option) -> str:
-        param_type = opt.type
-        display_name = param_type.name
-
-        # TODO: remove type-ignore comments once python/typeshed#4813 gets merged.
-        if isinstance(param_type, click.Choice):
-            return f"{display_name} ({' &#x7C; '.join(backquote(param_type.choices))})"
-        elif isinstance(param_type, click.DateTime):
-            return f"{display_name} ({' &#x7C; '.join(backquote(param_type.formats))})"  # type: ignore[attr-defined]
-        elif isinstance(param_type, (click.IntRange, click.FloatRange)):
-            if param_type.min is not None and param_type.max is not None:  # type: ignore[union-attr]
-                return f"{display_name} (between `{param_type.min}` and `{param_type.max}`)"  # type: ignore[union-attr]
-            elif param_type.min is not None:  # type: ignore[union-attr]
-                return f"{display_name} (`{param_type.min}` and above)"  # type: ignore[union-attr]
-            else:
-                return f"{display_name} (`{param_type.max}` and below)"  # type: ignore[union-attr]
-        else:
-            return display_name
-
-    params = [param for param in ctx.command.get_params(ctx) if isinstance(param, click.Option)]
+    options = [param for param in ctx.command.get_params(ctx) if isinstance(param, click.Option)]
+    option_rows = [_format_table_option_row(option) for option in options]
 
     yield "Options:"
     yield ""
     yield "| Name | Type | Description | Default |"
-    yield "| ------ | ---- | ----------- | ------- |"
-    for param in params:
-        names = ", ".join(backquote(param.opts))
-        names_negation = f" / {', '.join(backquote(param.secondary_opts))}" if param.secondary_opts != [] else ""
-        value_type = format_possible_value(param)
-        description = param.help if param.help is not None else "N/A"
-        default = f"`{param.default}`" if param.default is not None else "_required_"
-        yield f"| {names}{names_negation} | {value_type} | {description} | {default} |"
+    yield "| ---- | ---- | ----------- | ------- |"
+    yield from option_rows
     yield ""
