@@ -8,6 +8,12 @@ Usage:
 cli [OPTIONS] COMMAND [ARGS]...
 ```
 
+Options:
+
+```
+  --help  Show this message and exit.
+```
+
 ## bar
 
 The bar command
@@ -16,6 +22,12 @@ Usage:
 
 ```
 cli bar [OPTIONS] COMMAND [ARGS]...
+```
+
+Options:
+
+```
+  --help  Show this message and exit.
 ```
 
 ### hello
@@ -33,6 +45,7 @@ Options:
 ```
   --count INTEGER  Number of greetings.
   --name TEXT      The person to greet.
+  --help           Show this message and exit.
 ```
 
 ## foo
@@ -41,4 +54,10 @@ Usage:
 
 ```
 cli foo [OPTIONS]
+```
+
+Options:
+
+```
+  --help  Show this message and exit.
 ```
