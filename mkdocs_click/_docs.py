@@ -1,21 +1,23 @@
 # (C) Datadog, Inc. 2020-present
 # All rights reserved
 # Licensed under the Apache license (see LICENSE)
-from typing import Iterator, List, Optional, cast
+from typing import Iterable, Iterator, List, Optional, cast
 
 import click
 
 from ._exceptions import MkDocsClickException
 
 
-def make_command_docs(prog_name: str, command: click.BaseCommand, level: int = 0) -> Iterator[str]:
+def make_command_docs(
+    prog_name: str, command: click.BaseCommand, level: int = 0, style: str = "plain"
+) -> Iterator[str]:
     """Create the Markdown lines for a command and its sub-commands."""
-    for line in _recursively_make_command_docs(prog_name, command, level=level):
+    for line in _recursively_make_command_docs(prog_name, command, level=level, style=style):
         yield line.replace("\b", "")
 
 
 def _recursively_make_command_docs(
-    prog_name: str, command: click.BaseCommand, parent: click.Context = None, level: int = 0
+    prog_name: str, command: click.BaseCommand, parent: click.Context = None, level: int = 0, style: str = "plain"
 ) -> Iterator[str]:
     """Create the raw Markdown lines for a command and its sub-commands."""
     ctx = click.Context(cast(click.Command, command), parent=parent)
@@ -23,7 +25,7 @@ def _recursively_make_command_docs(
     yield from _make_title(prog_name, level)
     yield from _make_description(ctx)
     yield from _make_usage(ctx)
-    yield from _make_options(ctx)
+    yield from _make_options(ctx, style)
 
     subcommands = _get_sub_commands(ctx.command, ctx)
 
@@ -100,8 +102,19 @@ def _make_usage(ctx: click.Context) -> Iterator[str]:
     yield ""
 
 
-def _make_options(ctx: click.Context) -> Iterator[str]:
+def _make_options(ctx: click.Context, style: str = "plain") -> Iterator[str]:
     """Create the Markdown lines describing the options for the command."""
+
+    if style == "plain":
+        return _make_plain_options(ctx)
+    elif style == "table":
+        return _make_table_options(ctx)
+    else:
+        raise MkDocsClickException(f"{style} is not a valid option style, which must be either `plain` or `table`.")
+
+
+def _make_plain_options(ctx: click.Context) -> Iterator[str]:
+    """Create the plain style options description."""
     formatter = ctx.make_formatter()
     click.Command.format_options(ctx.command, ctx, formatter)
 
@@ -119,4 +132,45 @@ def _make_options(ctx: click.Context) -> Iterator[str]:
     yield "```"
     yield from option_lines
     yield "```"
+    yield ""
+
+
+def _make_table_options(ctx: click.Context) -> Iterator[str]:
+    """Create the table style options description."""
+
+    def backquote(opts: Iterable[str]) -> List[str]:
+        return [f"`{opt}`" for opt in opts]
+
+    def format_possible_value(opt: click.Option) -> str:
+        param_type = opt.type
+        display_name = param_type.name
+
+        # TODO: remove type-ignore comments once python/typeshed#4813 gets merged.
+        if isinstance(param_type, click.Choice):
+            return f"{display_name} ({' &#x7C; '.join(backquote(param_type.choices))})"
+        elif isinstance(param_type, click.DateTime):
+            return f"{display_name} ({' &#x7C; '.join(backquote(param_type.formats))})"  # type: ignore[attr-defined]
+        elif isinstance(param_type, (click.IntRange, click.FloatRange)):
+            if param_type.min is not None and param_type.max is not None:  # type: ignore[union-attr]
+                return f"{display_name} (between `{param_type.min}` and `{param_type.max}`)"  # type: ignore[union-attr]
+            elif param_type.min is not None:  # type: ignore[union-attr]
+                return f"{display_name} (`{param_type.min}` and above)"  # type: ignore[union-attr]
+            else:
+                return f"{display_name} (`{param_type.max}` and below)"  # type: ignore[union-attr]
+        else:
+            return display_name
+
+    params = [param for param in ctx.command.get_params(ctx) if isinstance(param, click.Option)]
+
+    yield "Options:"
+    yield ""
+    yield "| Name | Type | Description | Default |"
+    yield "| ------ | ---- | ----------- | ------- |"
+    for param in params:
+        names = ", ".join(backquote(param.opts))
+        names_negation = f" / {', '.join(backquote(param.secondary_opts))}" if param.secondary_opts != [] else ""
+        value_type = format_possible_value(param)
+        description = param.help if param.help is not None else "N/A"
+        default = f"`{param.default}`" if param.default is not None else "_required_"
+        yield f"| {names}{names_negation} | {value_type} | {description} | {default} |"
     yield ""
