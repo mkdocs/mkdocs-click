@@ -88,7 +88,7 @@ HELLO_TABLE_EXPECTED = dedent(
     Options:
 
     | Name | Type | Description | Default |
-    | ------ | ---- | ----------- | ------- |
+    | ---- | ---- | ----------- | ------- |
     | `-d`, `--debug` | text | Include debug output | _required_ |
     | `--choice` | choice (`foo` &#x7C; `bar`) | N/A | `foo` |
     | `--date` | datetime (`%Y-%m-%d`) | N/A | _required_ |
@@ -107,11 +107,11 @@ def test_make_command_docs_table():
 
 
 @click.command()
-def hello_only_help():
+def hello_minimal():
     """Hello, world!"""
 
 
-HELLO_ONLY_HELP_EXPECTED = dedent(
+HELLO_TABLE_MINIMAL_EXPECTED = dedent(
     """
     # hello
 
@@ -120,21 +120,21 @@ HELLO_ONLY_HELP_EXPECTED = dedent(
     Usage:
 
     ```
-    hello-only-help [OPTIONS]
+    hello-minimal [OPTIONS]
     ```
 
     Options:
 
     | Name | Type | Description | Default |
-    | ------ | ---- | ----------- | ------- |
+    | ---- | ---- | ----------- | ------- |
     | `--help` | boolean | Show this message and exit. | `False` |
     """
 ).strip()
 
 
-def test_make_command_docs_only_help():
-    output = "\n".join(make_command_docs("hello", hello_only_help, style="table")).strip()
-    assert output == HELLO_ONLY_HELP_EXPECTED
+def test_make_command_docs_table_minimale():
+    output = "\n".join(make_command_docs("hello", hello_minimal, style="table")).strip()
+    assert output == HELLO_TABLE_MINIMAL_EXPECTED
 
 
 class MultiCLI(click.MultiCommand):
