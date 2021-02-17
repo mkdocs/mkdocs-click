@@ -96,6 +96,7 @@ HELLO_TABLE_EXPECTED = dedent(
     | `--range-b` | float range (`0` and above) | N/A | _required_ |
     | `--range-c` | float range (`1` and below) | N/A | `0` |
     | `--flag` / `--no-flag` | boolean | N/A | `False` |
+    | `--help` | boolean | Show this message and exit. | `False` |
     """
 ).strip()
 
@@ -121,6 +122,12 @@ HELLO_ONLY_HELP_EXPECTED = dedent(
     ```
     hello-only-help [OPTIONS]
     ```
+
+    Options:
+
+    | Name | Type | Description | Default |
+    | ------ | ---- | ----------- | ------- |
+    | `--help` | boolean | Show this message and exit. | `False` |
     """
 ).strip()
 

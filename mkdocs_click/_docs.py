@@ -161,14 +161,12 @@ def _make_table_options(ctx: click.Context) -> Iterator[str]:
             return display_name
 
     params = [param for param in ctx.command.get_params(ctx) if isinstance(param, click.Option)]
-    if params[0].opts[0] == "--help":
-        return
 
     yield "Options:"
     yield ""
     yield "| Name | Type | Description | Default |"
     yield "| ------ | ---- | ----------- | ------- |"
-    for param in params[:-1]:
+    for param in params:
         names = ", ".join(backquote(param.opts))
         names_negation = f" / {', '.join(backquote(param.secondary_opts))}" if param.secondary_opts != [] else ""
         value_type = format_possible_value(param)
