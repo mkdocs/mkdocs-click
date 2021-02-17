@@ -117,11 +117,15 @@ def _make_plain_options(ctx: click.Context) -> Iterator[str]:
     """Create the plain style options description."""
     formatter = ctx.make_formatter()
     click.Command.format_options(ctx.command, ctx, formatter)
+
+    option_lines = formatter.getvalue().splitlines()
+
     # First line is redundant "Options"
-    # Last line is `--help`
-    option_lines = formatter.getvalue().splitlines()[1:-1]
-    if not option_lines:
-        return
+    option_lines = option_lines[1:]
+
+    if not option_lines:  # pragma: no cover
+        # We expect at least `--help` to be present.
+        raise RuntimeError("Expected at least one option")
 
     yield "Options:"
     yield ""

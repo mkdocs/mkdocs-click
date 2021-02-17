@@ -32,6 +32,7 @@ HELLO_EXPECTED = dedent(
 
     ```
       -d, --debug TEXT  Include debug output
+      --help            Show this message and exit.
     ```
 
     """
@@ -156,6 +157,12 @@ def test_custom_multicommand():
         multi [OPTIONS] COMMAND [ARGS]...
         ```
 
+        Options:
+
+        ```
+          --help  Show this message and exit.
+        ```
+
         ## hello
 
         Hello, world!
@@ -170,6 +177,7 @@ def test_custom_multicommand():
 
         ```
           -d, --debug TEXT  Include debug output
+          --help            Show this message and exit.
         ```
         """
     ).lstrip()
