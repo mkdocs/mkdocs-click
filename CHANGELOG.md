@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Add table formatting. (Pulls #25, #30)
 - Use `:prog_name:` more consistently in usage. (Pull #24)
+- Allow using full command paths in headers. (Pull #36)
 
 ### Fixed
 
