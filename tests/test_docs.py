@@ -126,10 +126,13 @@ HELLO_MINIMAL_TABLE_EXPECTED = dedent(
 ).lstrip()
 
 
-@pytest.mark.parametrize("command, expected", [
-    pytest.param(hello_full, HELLO_FULL_TABLE_EXPECTED, id="full"),
-    pytest.param(hello_minimal, HELLO_MINIMAL_TABLE_EXPECTED, id="minimal"),
-])
+@pytest.mark.parametrize(
+    "command, expected",
+    [
+        pytest.param(hello_full, HELLO_FULL_TABLE_EXPECTED, id="full"),
+        pytest.param(hello_minimal, HELLO_MINIMAL_TABLE_EXPECTED, id="minimal"),
+    ],
+)
 def test_style_table(command, expected):
     output = "\n".join(make_command_docs("hello", command, style="table"))
     assert output == expected
