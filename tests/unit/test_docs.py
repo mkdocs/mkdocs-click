@@ -22,13 +22,13 @@ HELLO_EXPECTED = dedent(
 
     Hello, world!
 
-    Usage:
+    **Usage:**
 
     ```
     hello [OPTIONS]
     ```
 
-    Options:
+    **Options:**
 
     ```
       -d, --debug TEXT  Include debug output
@@ -79,13 +79,13 @@ HELLO_TABLE_EXPECTED = dedent(
 
     Hello, world!
 
-    Usage:
+    **Usage:**
 
     ```
     hello [OPTIONS]
     ```
 
-    Options:
+    **Options:**
 
     | Name | Type | Description | Default |
     | ---- | ---- | ----------- | ------- |
@@ -117,13 +117,13 @@ HELLO_TABLE_MINIMAL_EXPECTED = dedent(
 
     Hello, world!
 
-    Usage:
+    **Usage:**
 
     ```
     hello [OPTIONS]
     ```
 
-    Options:
+    **Options:**
 
     | Name | Type | Description | Default |
     | ---- | ---- | ----------- | ------- |
@@ -165,13 +165,13 @@ def test_custom_multicommand(multi):
 
         Multi help
 
-        Usage:
+        **Usage:**
 
         ```
         multi [OPTIONS] COMMAND [ARGS]...
         ```
 
-        Options:
+        **Options:**
 
         ```
           --help  Show this message and exit.
@@ -181,13 +181,13 @@ def test_custom_multicommand(multi):
 
         Hello, world!
 
-        Usage:
+        **Usage:**
 
         ```
         multi hello [OPTIONS]
         ```
 
-        Options:
+        **Options:**
 
         ```
           -d, --debug TEXT  Include debug output
