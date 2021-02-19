@@ -6,6 +6,7 @@ from textwrap import dedent
 import click
 import pytest
 from mkdocs_click._docs import make_command_docs
+from mkdocs_click._exceptions import MkDocsClickException
 
 
 @click.command()
@@ -80,7 +81,7 @@ HELLO_TABLE_EXPECTED = dedent(
     Usage:
 
     ```
-    hello-table [OPTIONS]
+    hello [OPTIONS]
     ```
 
     Options:
@@ -118,7 +119,7 @@ HELLO_TABLE_MINIMAL_EXPECTED = dedent(
     Usage:
 
     ```
-    hello-minimal [OPTIONS]
+    hello [OPTIONS]
     ```
 
     Options:

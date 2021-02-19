@@ -5,6 +5,8 @@ from typing import Iterator, List, cast
 
 import click
 
+from ._exceptions import MkDocsClickException
+
 
 def make_command_docs(
     prog_name: str, command: click.BaseCommand, level: int = 0, style: str = "plain"
