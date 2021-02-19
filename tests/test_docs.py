@@ -44,7 +44,7 @@ def test_basic():
 
 
 def test_depth():
-    output = "\n".join(make_command_docs("hello", hello, level=2))
+    output = "\n".join(make_command_docs("hello", hello, depth=2))
     assert output == HELLO_EXPECTED.replace("# ", "### ")
 
 
