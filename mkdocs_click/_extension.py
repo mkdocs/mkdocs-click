@@ -27,7 +27,7 @@ def replace_command_docs(**options: Any) -> Iterator[str]:
 
     prog_name = prog_name or command_obj.name or command
 
-    return make_command_docs(prog_name=prog_name, command=command_obj, level=depth, style=style)
+    return make_command_docs(prog_name=prog_name, command=command_obj, depth=depth, style=style)
 
 
 class ClickProcessor(Preprocessor):

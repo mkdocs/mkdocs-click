@@ -9,20 +9,20 @@ from ._exceptions import MkDocsClickException
 
 
 def make_command_docs(
-    prog_name: str, command: click.BaseCommand, level: int = 0, style: str = "plain"
+    prog_name: str, command: click.BaseCommand, depth: int = 0, style: str = "plain"
 ) -> Iterator[str]:
     """Create the Markdown lines for a command and its sub-commands."""
-    for line in _recursively_make_command_docs(prog_name, command, level=level, style=style):
+    for line in _recursively_make_command_docs(prog_name, command, depth=depth, style=style):
         yield line.replace("\b", "")
 
 
 def _recursively_make_command_docs(
-    prog_name: str, command: click.BaseCommand, parent: click.Context = None, level: int = 0, style: str = "plain"
+    prog_name: str, command: click.BaseCommand, parent: click.Context = None, depth: int = 0, style: str = "plain"
 ) -> Iterator[str]:
     """Create the raw Markdown lines for a command and its sub-commands."""
     ctx = click.Context(cast(click.Command, command), info_name=prog_name, parent=parent)
 
-    yield from _make_title(prog_name, level)
+    yield from _make_title(prog_name, depth)
     yield from _make_description(ctx)
     yield from _make_usage(ctx)
     yield from _make_options(ctx, style)
@@ -30,7 +30,7 @@ def _recursively_make_command_docs(
     subcommands = _get_sub_commands(ctx.command, ctx)
 
     for command in sorted(subcommands, key=lambda cmd: cmd.name):
-        yield from _recursively_make_command_docs(command.name, command, parent=ctx, level=level + 1, style=style)
+        yield from _recursively_make_command_docs(command.name, command, parent=ctx, depth=depth + 1, style=style)
 
 
 def _get_sub_commands(command: click.Command, ctx: click.Context) -> List[click.Command]:
@@ -52,15 +52,10 @@ def _get_sub_commands(command: click.Command, ctx: click.Context) -> List[click.
     return subcommands
 
 
-def _make_title(prog_name: str, level: int) -> Iterator[str]:
+def _make_title(prog_name: str, depth: int) -> Iterator[str]:
     """Create the first markdown lines describing a command."""
-    yield _make_header(prog_name, level)
+    yield f"{'#' * (depth + 1)} {prog_name}"
     yield ""
-
-
-def _make_header(text: str, level: int) -> str:
-    """Create a markdown header at a given level"""
-    return f"{'#' * (level + 1)} {text}"
 
 
 def _make_description(ctx: click.Context) -> Iterator[str]:
