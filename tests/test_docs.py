@@ -34,31 +34,30 @@ HELLO_EXPECTED = dedent(
       -d, --debug TEXT  Include debug output
       --help            Show this message and exit.
     ```
-
     """
-).strip()
+).lstrip()
 
 
-def test_make_command_docs():
-    output = "\n".join(make_command_docs("hello", hello)).strip()
+def test_basic():
+    output = "\n".join(make_command_docs("hello", hello))
     assert output == HELLO_EXPECTED
 
 
 def test_depth():
-    output = "\n".join(make_command_docs("hello", hello, level=2)).strip()
+    output = "\n".join(make_command_docs("hello", hello, level=2))
     assert output == HELLO_EXPECTED.replace("# ", "### ")
 
 
 def test_prog_name():
-    output = "\n".join(make_command_docs("hello-world", hello)).strip()
+    output = "\n".join(make_command_docs("hello-world", hello))
     assert output == HELLO_EXPECTED.replace("hello", "hello-world")
 
 
-def test_make_command_docs_invalid():
+def test_style_invalid():
     with pytest.raises(
         MkDocsClickException, match="invalid is not a valid option style, which must be either `plain` or `table`."
     ):
-        "\n".join(make_command_docs("hello", hello, style="invalid")).strip()
+        list(make_command_docs("hello", hello, style="invalid"))
 
 
 @click.command()
@@ -69,11 +68,11 @@ def test_make_command_docs_invalid():
 @click.option("--range-b", type=click.FloatRange(0))
 @click.option("--range-c", type=click.FloatRange(None, 1), default=0)
 @click.option("--flag/--no-flag")
-def hello_table():
+def hello_full():
     """Hello, world!"""
 
 
-HELLO_TABLE_EXPECTED = dedent(
+HELLO_FULL_TABLE_EXPECTED = dedent(
     """
     # hello
 
@@ -98,12 +97,7 @@ HELLO_TABLE_EXPECTED = dedent(
     | `--flag` / `--no-flag` | boolean | N/A | `False` |
     | `--help` | boolean | Show this message and exit. | `False` |
     """
-).strip()
-
-
-def test_make_command_docs_table():
-    output = "\n".join(make_command_docs("hello", hello_table, style="table")).strip()
-    assert output == HELLO_TABLE_EXPECTED
+).lstrip()
 
 
 @click.command()
@@ -111,7 +105,7 @@ def hello_minimal():
     """Hello, world!"""
 
 
-HELLO_TABLE_MINIMAL_EXPECTED = dedent(
+HELLO_MINIMAL_TABLE_EXPECTED = dedent(
     """
     # hello
 
@@ -129,12 +123,19 @@ HELLO_TABLE_MINIMAL_EXPECTED = dedent(
     | ---- | ---- | ----------- | ------- |
     | `--help` | boolean | Show this message and exit. | `False` |
     """
-).strip()
+).lstrip()
 
 
-def test_make_command_docs_table_minimale():
-    output = "\n".join(make_command_docs("hello", hello_minimal, style="table")).strip()
-    assert output == HELLO_TABLE_MINIMAL_EXPECTED
+@pytest.mark.parametrize(
+    "command, expected",
+    [
+        pytest.param(hello_full, HELLO_FULL_TABLE_EXPECTED, id="full"),
+        pytest.param(hello_minimal, HELLO_MINIMAL_TABLE_EXPECTED, id="minimal"),
+    ],
+)
+def test_style_table(command, expected):
+    output = "\n".join(make_command_docs("hello", command, style="table"))
+    assert output == expected
 
 
 class MultiCLI(click.MultiCommand):
@@ -156,9 +157,6 @@ def test_custom_multicommand(multi):
     """
     Custom `MultiCommand` objects are supported (i.e. not just `Group` multi-commands).
     """
-
-    multi = MultiCLI("multi", help="Multi help")
-
     expected = dedent(
         """
         # multi
