@@ -35,7 +35,7 @@ setup(
     python_requires=">=3.7",
     include_package_data=True,
     zip_safe=False,
-    entry_points={"markdown.extensions": ["mkdocs-click = mkdocs_click:makeExtension"]},
+    entry_points={"markdown.extensions": ["mkdocs-click = mkdocs_click:MKClickExtension"]},
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",

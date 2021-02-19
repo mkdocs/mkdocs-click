@@ -7,7 +7,7 @@ from textwrap import dedent
 import pytest
 from markdown import Markdown
 
-from mkdocs_click._exceptions import MkDocsClickException
+import mkdocs_click
 
 EXPECTED = (Path(__file__).parent / "app" / "expected.md").read_text()
 EXPECTED_ENHANCED = (Path(__file__).parent / "app" / "expected-enhanced.md").read_text()
@@ -26,7 +26,7 @@ def test_extension(command, expected_name):
     """
     Markdown output for a relatively complex Click application is correct.
     """
-    md = Markdown(extensions=['mkdocs-click'])
+    md = Markdown(extensions=[mkdocs_click.makeExtension()])
 
     source = dedent(
         f"""
@@ -45,7 +45,7 @@ def test_prog_name():
     """
     The :prog_name: attribute determines the name to display for the command.
     """
-    md = Markdown(extensions=['mkdocs-click'])
+    md = Markdown(extensions=[mkdocs_click.makeExtension()])
 
     source = dedent(
         """
@@ -65,7 +65,7 @@ def test_depth():
     """
     The :depth: attribute increases the level of headers.
     """
-    md = Markdown(extensions=['mkdocs-click'])
+    md = Markdown(extensions=[mkdocs_click.makeExtension()])
 
     source = dedent(
         """
@@ -88,7 +88,7 @@ def test_required_options(option):
     """
     The module and command options are required.
     """
-    md = Markdown(extensions=['mkdocs-click'])
+    md = Markdown(extensions=[mkdocs_click.makeExtension()])
 
     source = dedent(
         """
@@ -100,7 +100,7 @@ def test_required_options(option):
 
     source = source.replace(f":{option}:", ":somethingelse:")
 
-    with pytest.raises(MkDocsClickException):
+    with pytest.raises(mkdocs_click.MkDocsClickException):
         md.convert(source)
 
 
@@ -111,7 +111,9 @@ def test_enhanced_titles():
     See: https://github.com/DataDog/mkdocs-click/issues/35
     """
     md = Markdown(extensions=['attr_list'])
-    md.registerExtensions(['mkdocs-click'], {})
+    # Register our extension as a second step, so that we see `attr_list`.
+    # This is what MkDocs does, so there's no hidden usage constraint here.
+    md.registerExtensions([mkdocs_click.makeExtension()], {})
 
     source = dedent(
         """
