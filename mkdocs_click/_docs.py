@@ -81,7 +81,7 @@ def _make_usage(ctx: click.Context) -> Iterator[str]:
     formatter.write_usage(ctx.command_path, " ".join(pieces), prefix="")
     usage = formatter.getvalue().rstrip("\n")
 
-    yield "Usage:"
+    yield "**Usage:**"
     yield ""
     yield "```"
     yield usage
@@ -114,7 +114,7 @@ def _make_plain_options(ctx: click.Context) -> Iterator[str]:
         # We expect at least `--help` to be present.
         raise RuntimeError("Expected at least one option")
 
-    yield "Options:"
+    yield "**Options:**"
     yield ""
     yield "```"
     yield from option_lines
@@ -193,7 +193,7 @@ def _make_table_options(ctx: click.Context) -> Iterator[str]:
     options = [param for param in ctx.command.get_params(ctx) if isinstance(param, click.Option)]
     option_rows = [_format_table_option_row(option) for option in options]
 
-    yield "Options:"
+    yield "**Options:**"
     yield ""
     yield "| Name | Type | Description | Default |"
     yield "| ---- | ---- | ----------- | ------- |"

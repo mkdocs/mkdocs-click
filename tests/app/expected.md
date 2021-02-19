@@ -2,13 +2,13 @@
 
 Main entrypoint for this dummy program
 
-Usage:
+**Usage:**
 
 ```
 cli [OPTIONS] COMMAND [ARGS]...
 ```
 
-Options:
+**Options:**
 
 ```
   --help  Show this message and exit.
@@ -18,13 +18,13 @@ Options:
 
 The bar command
 
-Usage:
+**Usage:**
 
 ```
 cli bar [OPTIONS] COMMAND [ARGS]...
 ```
 
-Options:
+**Options:**
 
 ```
   --help  Show this message and exit.
@@ -34,13 +34,13 @@ Options:
 
 Simple program that greets NAME for a total of COUNT times.
 
-Usage:
+**Usage:**
 
 ```
 cli bar hello [OPTIONS]
 ```
 
-Options:
+**Options:**
 
 ```
   --count INTEGER  Number of greetings.
@@ -50,13 +50,13 @@ Options:
 
 ## foo
 
-Usage:
+**Usage:**
 
 ```
 cli foo [OPTIONS]
 ```
 
-Options:
+**Options:**
 
 ```
   --help  Show this message and exit.
