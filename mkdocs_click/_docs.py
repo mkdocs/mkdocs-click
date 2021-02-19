@@ -4,25 +4,37 @@
 from typing import Iterator, List, cast
 
 import click
+from markdown.extensions.toc import slugify
 
 from ._exceptions import MkDocsClickException
 
 
 def make_command_docs(
-    prog_name: str, command: click.BaseCommand, depth: int = 0, style: str = "plain"
+    prog_name: str,
+    command: click.BaseCommand,
+    depth: int = 0,
+    style: str = "plain",
+    has_attr_list: bool = False,
 ) -> Iterator[str]:
     """Create the Markdown lines for a command and its sub-commands."""
-    for line in _recursively_make_command_docs(prog_name, command, depth=depth, style=style):
+    for line in _recursively_make_command_docs(
+        prog_name, command, depth=depth, style=style, has_attr_list=has_attr_list
+    ):
         yield line.replace("\b", "")
 
 
 def _recursively_make_command_docs(
-    prog_name: str, command: click.BaseCommand, parent: click.Context = None, depth: int = 0, style: str = "plain"
+    prog_name: str,
+    command: click.BaseCommand,
+    parent: click.Context = None,
+    depth: int = 0,
+    style: str = "plain",
+    has_attr_list: bool = False,
 ) -> Iterator[str]:
     """Create the raw Markdown lines for a command and its sub-commands."""
     ctx = click.Context(cast(click.Command, command), info_name=prog_name, parent=parent)
 
-    yield from _make_title(prog_name, depth)
+    yield from _make_title(ctx, depth, has_attr_list=has_attr_list)
     yield from _make_description(ctx)
     yield from _make_usage(ctx)
     yield from _make_options(ctx, style)
@@ -30,7 +42,9 @@ def _recursively_make_command_docs(
     subcommands = _get_sub_commands(ctx.command, ctx)
 
     for command in sorted(subcommands, key=lambda cmd: cmd.name):
-        yield from _recursively_make_command_docs(command.name, command, parent=ctx, depth=depth + 1, style=style)
+        yield from _recursively_make_command_docs(
+            command.name, command, parent=ctx, depth=depth + 1, style=style, has_attr_list=has_attr_list
+        )
 
 
 def _get_sub_commands(command: click.Command, ctx: click.Context) -> List[click.Command]:
@@ -52,9 +66,40 @@ def _get_sub_commands(command: click.Command, ctx: click.Context) -> List[click.
     return subcommands
 
 
-def _make_title(prog_name: str, depth: int) -> Iterator[str]:
-    """Create the first markdown lines describing a command."""
-    yield f"{'#' * (depth + 1)} {prog_name}"
+def _make_title(ctx: click.Context, depth: int, *, has_attr_list: bool) -> Iterator[str]:
+    """Create the Markdown heading for a command."""
+    if has_attr_list:
+        yield from _make_title_full_command_path(ctx, depth)
+    else:
+        yield from _make_title_basic(ctx, depth)
+
+
+def _make_title_basic(ctx: click.Context, depth: int) -> Iterator[str]:
+    """Create a basic Markdown heading for a command."""
+    yield f"{'#' * (depth + 1)} {ctx.info_name}"
+    yield ""
+
+
+def _make_title_full_command_path(ctx: click.Context, depth: int) -> Iterator[str]:
+    """Create the markdown heading for a command, showing the full command path.
+
+    This style accomodates nested commands by showing:
+    * The full command path for headers and permalinks (eg `# git commit` and `http://localhost:8000/#git-commit`)
+    * The command leaf name only for TOC entries (eg `* commit`).
+
+    We do this because a TOC naturally conveys the hierarchy, whereas headings and permalinks should be namespaced to
+    convey the hierarchy.
+
+    See: https://github.com/DataDog/mkdocs-click/issues/35
+    """
+    text = ctx.command_path  # 'git commit'
+    permalink = slugify(ctx.command_path, "-")  # 'git-commit'
+    toc_label = ctx.info_name  # 'commit'
+
+    # Requires `attr_list` extension, see: https://python-markdown.github.io/extensions/toc/#custom-labels
+    attributes = f"#{permalink} data-toc-label='{toc_label}'"
+
+    yield f"{'#' * (depth + 1)} {text} {{ {attributes} }}"
     yield ""
 
 

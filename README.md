@@ -94,6 +94,24 @@ If you are inserting documentation within other Markdown content, you can set th
 
 By default it is set to `0`, i.e. headers start at `<h1>`. If set to `1`, headers will start at `<h2>`, and so on. Note that if you insert your own first level heading and leave depth at its default value of 0, the page will have multiple `<h1>` tags, which is not compatible with themes that generate page-internal menus such as the ReadTheDocs and mkdocs-material themes.
 
+### Full command path headers
+
+By default, `mkdocs-click` outputs headers that contain the command name. For nested commands such as `$ cli build all`, this also means the heading would be `## all`. This might be surprising, and may be harder to navigate at a glance for highly nested CLI apps.
+
+If you'd like to show the full command path instead, turn on the [Attribute Lists extension](https://python-markdown.github.io/extensions/attr_list/):
+
+```yaml
+# mkdocs.yaml
+
+markdown_extensions:
+    - attr_list
+    - mkdocs-click
+```
+
+`mkdocs-click` will then output the full command path in headers (e.g. `## cli build all`) and permalinks (e.g. `#cli-build-all`).
+
+Note that the table of content (TOC) will still use the command name: the TOC is naturally hierarchal, so full command paths would be redundant. (This exception is why the `attr_list` extension is required.)
+
 ## Reference
 
 ### Block syntax

@@ -7,9 +7,10 @@ from textwrap import dedent
 import pytest
 from markdown import Markdown
 
-import mkdocs_click
+from mkdocs_click._exceptions import MkDocsClickException
 
 EXPECTED = (Path(__file__).parent / "app" / "expected.md").read_text()
+EXPECTED_ENHANCED = (Path(__file__).parent / "app" / "expected-enhanced.md").read_text()
 
 
 @pytest.mark.parametrize(
@@ -25,7 +26,7 @@ def test_extension(command, expected_name):
     """
     Markdown output for a relatively complex Click application is correct.
     """
-    md = Markdown(extensions=[mkdocs_click.makeExtension()])
+    md = Markdown(extensions=['mkdocs-click'])
 
     source = dedent(
         f"""
@@ -44,7 +45,7 @@ def test_prog_name():
     """
     The :prog_name: attribute determines the name to display for the command.
     """
-    md = Markdown(extensions=[mkdocs_click.makeExtension()])
+    md = Markdown(extensions=['mkdocs-click'])
 
     source = dedent(
         """
@@ -64,7 +65,7 @@ def test_depth():
     """
     The :depth: attribute increases the level of headers.
     """
-    md = Markdown(extensions=[mkdocs_click.makeExtension()])
+    md = Markdown(extensions=['mkdocs-click'])
 
     source = dedent(
         """
@@ -87,7 +88,7 @@ def test_required_options(option):
     """
     The module and command options are required.
     """
-    md = Markdown(extensions=[mkdocs_click.makeExtension()])
+    md = Markdown(extensions=['mkdocs-click'])
 
     source = dedent(
         """
@@ -99,5 +100,25 @@ def test_required_options(option):
 
     source = source.replace(f":{option}:", ":somethingelse:")
 
-    with pytest.raises(mkdocs_click.MkDocsClickException):
+    with pytest.raises(MkDocsClickException):
         md.convert(source)
+
+
+def test_enhanced_titles():
+    """
+    If `attr_list` extension is registered, section titles are enhanced with full command paths.
+
+    See: https://github.com/DataDog/mkdocs-click/issues/35
+    """
+    md = Markdown(extensions=['attr_list'])
+    md.registerExtensions(['mkdocs-click'], {})
+
+    source = dedent(
+        """
+        ::: mkdocs-click
+            :module: tests.app.cli
+            :command: cli
+        """
+    )
+
+    assert md.convert(source) == md.convert(EXPECTED_ENHANCED)
