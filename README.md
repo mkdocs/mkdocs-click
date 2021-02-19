@@ -106,11 +106,13 @@ The syntax for `mkdocs-click` blocks is the following:
     :command: <COMMAND>
     :prog_name: <PROG_NAME>
     :depth: <DEPTH>
+    :style: <STYLE>
 ```
 
 Options:
 
-- `module`: path to the module where the command object is located.
-- `command`: name of the command object.
-- `prog_name`: _(Optional, default: same as `command`)_ the name to display for the command.
+- `module`: Path to the module where the command object is located.
+- `command`: Name of the command object.
+- `prog_name`: _(Optional, default: same as `command`)_ The name to display for the command.
 - `depth`: _(Optional, default: `0`)_ Offset to add when generating headers.
+- `style`: _(Optional, default: `plain`)_ Style for the options section. The possible choices are `plain` and `table`.
