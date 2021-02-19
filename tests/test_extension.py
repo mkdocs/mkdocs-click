@@ -10,6 +10,7 @@ from markdown import Markdown
 import mkdocs_click
 
 EXPECTED = (Path(__file__).parent / "app" / "expected.md").read_text()
+EXPECTED_ENHANCED = (Path(__file__).parent / "app" / "expected-enhanced.md").read_text()
 
 
 @pytest.mark.parametrize(
@@ -101,3 +102,25 @@ def test_required_options(option):
 
     with pytest.raises(mkdocs_click.MkDocsClickException):
         md.convert(source)
+
+
+def test_enhanced_titles():
+    """
+    If `attr_list` extension is registered, section titles are enhanced with full command paths.
+
+    See: https://github.com/DataDog/mkdocs-click/issues/35
+    """
+    md = Markdown(extensions=["attr_list"])
+    # Register our extension as a second step, so that we see `attr_list`.
+    # This is what MkDocs does, so there's no hidden usage constraint here.
+    md.registerExtensions([mkdocs_click.makeExtension()], {})
+
+    source = dedent(
+        """
+        ::: mkdocs-click
+            :module: tests.app.cli
+            :command: cli
+        """
+    )
+
+    assert md.convert(source) == md.convert(EXPECTED_ENHANCED)
