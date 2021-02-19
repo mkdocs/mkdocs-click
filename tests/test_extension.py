@@ -110,7 +110,7 @@ def test_enhanced_titles():
 
     See: https://github.com/DataDog/mkdocs-click/issues/35
     """
-    md = Markdown(extensions=['attr_list'])
+    md = Markdown(extensions=["attr_list"])
     # Register our extension as a second step, so that we see `attr_list`.
     # This is what MkDocs does, so there's no hidden usage constraint here.
     md.registerExtensions([mkdocs_click.makeExtension()], {})
