@@ -4,39 +4,36 @@
 from pathlib import Path
 from textwrap import dedent
 
-import mkdocs_click
 import pytest
 from markdown import Markdown
+
+import mkdocs_click
 
 EXPECTED = (Path(__file__).parent / "app" / "expected.md").read_text()
 
 
 @pytest.mark.parametrize(
-    "attr",
+    "command, expected_name",
     [
-        pytest.param(("cli", "cli"), id="cli-simple"),
-        pytest.param(("cli_named", "cli"), id="cli-explicit-name"),
-        pytest.param(("multi_named", "multi"), id="multi-explicit-name"),
-        pytest.param(("multi", "multi"), id="no-name"),
+        pytest.param("cli", "cli", id="cli-simple"),
+        pytest.param("cli_named", "cli", id="cli-explicit-name"),
+        pytest.param("multi_named", "multi", id="multi-explicit-name"),
+        pytest.param("multi", "multi", id="no-name"),
     ],
 )
-def test_extension(attr):
+def test_extension(command, expected_name):
     """
     Markdown output for a relatively complex Click application is correct.
     """
-    (command, expected_name) = attr
-
     md = Markdown(extensions=[mkdocs_click.makeExtension()])
 
     source = dedent(
-        """
+        f"""
         ::: mkdocs-click
             :module: tests.app.cli
-            :command: {{cli}}
+            :command: {command}
         """
     )
-
-    source = source.replace("{{cli}}", command)
 
     expected = EXPECTED.replace("cli", expected_name)
 
