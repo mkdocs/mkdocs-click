@@ -51,7 +51,7 @@ def test_depth():
 
 def test_prog_name():
     output = "\n".join(make_command_docs("hello-world", hello)).strip()
-    assert output == HELLO_EXPECTED.replace("# hello", "# hello-world")
+    assert output == HELLO_EXPECTED.replace("hello", "hello-world")
 
 
 def test_make_command_docs_invalid():
@@ -82,7 +82,7 @@ HELLO_TABLE_EXPECTED = dedent(
     Usage:
 
     ```
-    hello-table [OPTIONS]
+    hello [OPTIONS]
     ```
 
     Options:
@@ -120,7 +120,7 @@ HELLO_TABLE_MINIMAL_EXPECTED = dedent(
     Usage:
 
     ```
-    hello-minimal [OPTIONS]
+    hello [OPTIONS]
     ```
 
     Options:
@@ -145,7 +145,14 @@ class MultiCLI(click.MultiCommand):
         return hello
 
 
-def test_custom_multicommand():
+@pytest.mark.parametrize(
+    "multi",
+    [
+        pytest.param(MultiCLI("multi", help="Multi help"), id="explicit-name"),
+        pytest.param(MultiCLI(help="Multi help"), id="no-name"),
+    ],
+)
+def test_custom_multicommand(multi):
     """
     Custom `MultiCommand` objects are supported (i.e. not just `Group` multi-commands).
     """
@@ -191,10 +198,3 @@ def test_custom_multicommand():
 
     output = "\n".join(make_command_docs("multi", multi))
     assert output == expected
-
-
-def test_custom_multicommand_name():
-    """Custom multi commands must be given a name."""
-    multi = MultiCLI()
-    with pytest.raises(MkDocsClickException):
-        list(make_command_docs("multi", multi))
