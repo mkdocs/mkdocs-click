@@ -23,7 +23,7 @@ site_name: Example
 theme: readthedocs
 
 markdown_extensions:
-    - mkdocs-click
+    - mkdocs_click
 ```
 
 Add a CLI application, e.g.:
@@ -105,7 +105,7 @@ If you'd like to show the full command path instead, turn on the [Attribute List
 
 markdown_extensions:
     - attr_list
-    - mkdocs-click
+    - mkdocs_click
 ```
 
 `mkdocs-click` will then output the full command path in headers (e.g. `## cli build all`) and permalinks (e.g. `#cli-build-all`).
