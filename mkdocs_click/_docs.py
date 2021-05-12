@@ -41,9 +41,9 @@ def _recursively_make_command_docs(
 
     subcommands = _get_sub_commands(ctx.command, ctx)
 
-    for command in sorted(subcommands, key=lambda cmd: cmd.name):
+    for command in sorted(subcommands, key=lambda cmd: cmd.name):  # type: ignore
         yield from _recursively_make_command_docs(
-            command.name, command, parent=ctx, depth=depth + 1, style=style, has_attr_list=has_attr_list
+            cast(str, command.name), command, parent=ctx, depth=depth + 1, style=style, has_attr_list=has_attr_list
         )
 
 
