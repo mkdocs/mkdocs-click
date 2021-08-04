@@ -221,7 +221,8 @@ def _format_table_option_row(option: click.Option) -> str:
     description = option.help if option.help is not None else "N/A"
 
     # -> `False`
-    default = f"`{option.default}`" if option.default is not None else "_required_"
+    none_default_msg = "_required" if option.required else "None"
+    default = f"`{option.default}`" if option.default is not None else none_default_msg
 
     # -> "| `-V`, `--version` / `--show-version` | boolean | Show version info. | `False` |"
     return f"| {names} | {value_type} | {description} | {default} |"
