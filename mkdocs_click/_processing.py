@@ -22,7 +22,7 @@ def replace_blocks(lines: Iterable[str], title: str, replace: Callable[..., Iter
 
     for line in lines:
         if in_block_section:
-            match = re.search(r"^\s+:(?P<key>.+):(?:\s+(?P<value>\S+))?", line)
+            match = re.search(r"^\s+:(?P<key>.+):(?:\s+(?P<value>.*\S))?", line)
             if match is not None:
                 # New ':key:' or ':key: value' line, ingest it.
                 key = match.group("key")
