@@ -88,11 +88,11 @@ HELLO_FULL_TABLE_EXPECTED = dedent(
 
     | Name | Type | Description | Default |
     | ---- | ---- | ----------- | ------- |
-    | `-d`, `--debug` | text | Include debug output | _required_ |
+    | `-d`, `--debug` | text | Include debug output | None |
     | `--choice` | choice (`foo` &#x7C; `bar`) | N/A | `foo` |
-    | `--date` | datetime (`%Y-%m-%d`) | N/A | _required_ |
+    | `--date` | datetime (`%Y-%m-%d`) | N/A | None |
     | `--range-a` | float range (between `0` and `1`) | N/A | `0` |
-    | `--range-b` | float range (`0` and above) | N/A | _required_ |
+    | `--range-b` | float range (`0` and above) | N/A | None |
     | `--range-c` | float range (`1` and below) | N/A | `0` |
     | `--flag` / `--no-flag` | boolean | N/A | `False` |
     | `--help` | boolean | Show this message and exit. | `False` |
