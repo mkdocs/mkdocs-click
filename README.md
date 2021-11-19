@@ -134,3 +134,4 @@ Options:
 - `prog_name`: _(Optional, default: same as `command`)_ The name to display for the command.
 - `depth`: _(Optional, default: `0`)_ Offset to add when generating headers.
 - `style`: _(Optional, default: `plain`)_ Style for the options section. The possible choices are `plain` and `table`.
+- `remove_ascii_art`: _(Optional, default: `False`)_ When docstrings begin with the escape character `\b`, all text will be ignored until the next blank line is encountered.
