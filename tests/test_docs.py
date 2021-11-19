@@ -16,6 +16,31 @@ def hello():
     """Hello, world!"""
 
 
+@click.command()
+@click.option("-d", "--debug", help="Include debug output")
+def hello_escape_marker():
+    """
+    \b
+    Hello, world!
+    """
+
+
+@click.command()
+@click.option("-d", "--debug", help="Include debug output")
+def hello_ascii_art():
+    """
+    \b
+      ______  __       __    ______  __  ___
+     /      ||  |     |  |  /      ||  |/  /
+    |  ,----'|  |     |  | |  ,----'|  '  /
+    |  |     |  |     |  | |  |     |    <
+    |  `----.|  `----.|  | |  `----.|  .  \\
+     \\______||_______||__|  \\______||__|\\__\\
+
+    Hello, world!
+    """
+
+
 HELLO_EXPECTED = dedent(
     """
     # hello
@@ -58,6 +83,16 @@ def test_style_invalid():
         MkDocsClickException, match="invalid is not a valid option style, which must be either `plain` or `table`."
     ):
         list(make_command_docs("hello", hello, style="invalid"))
+
+
+def test_basic_escape_marker():
+    output = "\n".join(make_command_docs("hello", hello_escape_marker))
+    assert output == HELLO_EXPECTED
+
+
+def test_basic_ascii_art():
+    output = "\n".join(make_command_docs("hello", hello_ascii_art, remove_ascii_art=True))
+    assert output == HELLO_EXPECTED
 
 
 @click.command()

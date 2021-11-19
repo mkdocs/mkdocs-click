@@ -14,13 +14,17 @@ def make_command_docs(
     command: click.BaseCommand,
     depth: int = 0,
     style: str = "plain",
+    remove_ascii_art: bool = False,
     has_attr_list: bool = False,
 ) -> Iterator[str]:
     """Create the Markdown lines for a command and its sub-commands."""
     for line in _recursively_make_command_docs(
-        prog_name, command, depth=depth, style=style, has_attr_list=has_attr_list
+        prog_name, command, depth=depth, style=style, remove_ascii_art=remove_ascii_art, has_attr_list=has_attr_list
     ):
-        yield line.replace("\b", "")
+        if line.strip() == "\b":
+            continue
+
+        yield line
 
 
 def _recursively_make_command_docs(
@@ -29,13 +33,14 @@ def _recursively_make_command_docs(
     parent: click.Context = None,
     depth: int = 0,
     style: str = "plain",
+    remove_ascii_art: bool = False,
     has_attr_list: bool = False,
 ) -> Iterator[str]:
     """Create the raw Markdown lines for a command and its sub-commands."""
     ctx = click.Context(cast(click.Command, command), info_name=prog_name, parent=parent)
 
     yield from _make_title(ctx, depth, has_attr_list=has_attr_list)
-    yield from _make_description(ctx)
+    yield from _make_description(ctx, remove_ascii_art=remove_ascii_art)
     yield from _make_usage(ctx)
     yield from _make_options(ctx, style)
 
@@ -103,12 +108,26 @@ def _make_title_full_command_path(ctx: click.Context, depth: int) -> Iterator[st
     yield ""
 
 
-def _make_description(ctx: click.Context) -> Iterator[str]:
+def _make_description(ctx: click.Context, remove_ascii_art: bool = False) -> Iterator[str]:
     """Create markdown lines based on the command's own description."""
     help_string = ctx.command.help or ctx.command.short_help
 
     if help_string:
-        yield from help_string.splitlines()
+        if remove_ascii_art:
+            skipped_ascii_art = True
+            for i, line in enumerate(help_string.splitlines()):
+                if skipped_ascii_art is False:
+                    if not line.strip():
+                        skipped_ascii_art = True
+                        continue
+                elif i == 0 and line.strip() == "\b":
+                    skipped_ascii_art = False
+
+                if skipped_ascii_art:
+                    yield line
+        else:
+            yield from help_string.splitlines()
+
         yield ""
 
 

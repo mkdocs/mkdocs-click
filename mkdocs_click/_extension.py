@@ -23,13 +23,19 @@ def replace_command_docs(has_attr_list: bool = False, **options: Any) -> Iterato
     prog_name = options.get("prog_name", None)
     depth = int(options.get("depth", 0))
     style = options.get("style", "plain")
+    remove_ascii_art = options.get("remove_ascii_art", False)
 
     command_obj = load_command(module, command)
 
     prog_name = prog_name or command_obj.name or command
 
     return make_command_docs(
-        prog_name=prog_name, command=command_obj, depth=depth, style=style, has_attr_list=has_attr_list
+        prog_name=prog_name,
+        command=command_obj,
+        depth=depth,
+        style=style,
+        remove_ascii_art=remove_ascii_art,
+        has_attr_list=has_attr_list,
     )
 
 
