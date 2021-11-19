@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## 0.5.0 - 2021-11-19
+
+### Added
+
+- Add ability to ignore ASCII art. (Pull #45)
+
+### Fixed
+
+- Correctly handle default values of `None`. (Pull #41)
+
 ## 0.4.0 - 2021-05-12
 
 ### Added
