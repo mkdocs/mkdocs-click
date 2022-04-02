@@ -1,6 +1,7 @@
 # (C) Datadog, Inc. 2020-present
 # All rights reserved
 # Licensed under the Apache license (see LICENSE)
+import inspect
 from typing import Iterator, List, cast
 
 import click
@@ -113,6 +114,9 @@ def _make_description(ctx: click.Context, remove_ascii_art: bool = False) -> Ite
     help_string = ctx.command.help or ctx.command.short_help
 
     if help_string:
+        # https://github.com/pallets/click/pull/2151
+        help_string = inspect.cleandoc(help_string)
+
         if remove_ascii_art:
             skipped_ascii_art = True
             for i, line in enumerate(help_string.splitlines()):
