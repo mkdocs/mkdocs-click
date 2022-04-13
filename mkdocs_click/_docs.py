@@ -22,7 +22,13 @@ def make_command_docs(
 ) -> Iterator[str]:
     """Create the Markdown lines for a command and its sub-commands."""
     for line in _recursively_make_command_docs(
-        prog_name, command, depth=depth, style=style, remove_ascii_art=remove_ascii_art, show_hidden=show_hidden, has_attr_list=has_attr_list
+        prog_name,
+        command,
+        depth=depth,
+        style=style,
+        remove_ascii_art=remove_ascii_art,
+        show_hidden=show_hidden,
+        has_attr_list=has_attr_list,
     ):
         if line.strip() == "\b":
             continue
@@ -55,7 +61,13 @@ def _recursively_make_command_docs(
 
     for command in sorted(subcommands, key=lambda cmd: cmd.name):  # type: ignore
         yield from _recursively_make_command_docs(
-            cast(str, command.name), command, parent=ctx, depth=depth + 1, style=style, show_hidden=show_hidden, has_attr_list=has_attr_list
+            cast(str, command.name),
+            command,
+            parent=ctx,
+            depth=depth + 1,
+            style=style,
+            show_hidden=show_hidden,
+            has_attr_list=has_attr_list,
         )
 
 
