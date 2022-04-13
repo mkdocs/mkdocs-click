@@ -2,6 +2,7 @@
 # All rights reserved
 # Licensed under the Apache license (see LICENSE)
 import inspect
+from contextlib import contextmanager, ExitStack
 from typing import Iterator, List, cast
 
 import click
@@ -16,11 +17,12 @@ def make_command_docs(
     depth: int = 0,
     style: str = "plain",
     remove_ascii_art: bool = False,
+    show_hidden: bool = False,
     has_attr_list: bool = False,
 ) -> Iterator[str]:
     """Create the Markdown lines for a command and its sub-commands."""
     for line in _recursively_make_command_docs(
-        prog_name, command, depth=depth, style=style, remove_ascii_art=remove_ascii_art, has_attr_list=has_attr_list
+        prog_name, command, depth=depth, style=style, remove_ascii_art=remove_ascii_art, show_hidden=show_hidden, has_attr_list=has_attr_list
     ):
         if line.strip() == "\b":
             continue
@@ -35,21 +37,25 @@ def _recursively_make_command_docs(
     depth: int = 0,
     style: str = "plain",
     remove_ascii_art: bool = False,
+    show_hidden: bool = False,
     has_attr_list: bool = False,
 ) -> Iterator[str]:
     """Create the raw Markdown lines for a command and its sub-commands."""
     ctx = click.Context(cast(click.Command, command), info_name=prog_name, parent=parent)
 
+    if ctx.command.hidden and not show_hidden:
+        return
+
     yield from _make_title(ctx, depth, has_attr_list=has_attr_list)
     yield from _make_description(ctx, remove_ascii_art=remove_ascii_art)
     yield from _make_usage(ctx)
-    yield from _make_options(ctx, style)
+    yield from _make_options(ctx, style, show_hidden=show_hidden)
 
     subcommands = _get_sub_commands(ctx.command, ctx)
 
     for command in sorted(subcommands, key=lambda cmd: cmd.name):  # type: ignore
         yield from _recursively_make_command_docs(
-            cast(str, command.name), command, parent=ctx, depth=depth + 1, style=style, has_attr_list=has_attr_list
+            cast(str, command.name), command, parent=ctx, depth=depth + 1, style=style, show_hidden=show_hidden, has_attr_list=has_attr_list
         )
 
 
@@ -152,37 +158,55 @@ def _make_usage(ctx: click.Context) -> Iterator[str]:
     yield ""
 
 
-def _make_options(ctx: click.Context, style: str = "plain") -> Iterator[str]:
+def _make_options(ctx: click.Context, style: str = "plain", show_hidden: bool = False) -> Iterator[str]:
     """Create the Markdown lines describing the options for the command."""
 
     if style == "plain":
-        return _make_plain_options(ctx)
+        return _make_plain_options(ctx, show_hidden=show_hidden)
     elif style == "table":
-        return _make_table_options(ctx)
+        return _make_table_options(ctx, show_hidden=show_hidden)
     else:
         raise MkDocsClickException(f"{style} is not a valid option style, which must be either `plain` or `table`.")
 
 
-def _make_plain_options(ctx: click.Context) -> Iterator[str]:
+@contextmanager
+def _show_options(ctx: click.Context) -> Iterator[None]:
+    """Context manager that temporarily shows all hidden options."""
+    options = [opt for opt in ctx.command.get_params(ctx) if isinstance(opt, click.Option) and opt.hidden]
+
+    try:
+        for option in options:
+            option.hidden = False
+        yield
+    finally:
+        for option in options:
+            option.hidden = True
+
+
+def _make_plain_options(ctx: click.Context, show_hidden: bool = False) -> Iterator[str]:
     """Create the plain style options description."""
-    formatter = ctx.make_formatter()
-    click.Command.format_options(ctx.command, ctx, formatter)
+    with ExitStack() as stack:
+        if show_hidden:
+            stack.enter_context(_show_options(ctx))
 
-    option_lines = formatter.getvalue().splitlines()
+        formatter = ctx.make_formatter()
+        click.Command.format_options(ctx.command, ctx, formatter)
 
-    # First line is redundant "Options"
-    option_lines = option_lines[1:]
+        option_lines = formatter.getvalue().splitlines()
 
-    if not option_lines:  # pragma: no cover
-        # We expect at least `--help` to be present.
-        raise RuntimeError("Expected at least one option")
+        # First line is redundant "Options"
+        option_lines = option_lines[1:]
 
-    yield "**Options:**"
-    yield ""
-    yield "```"
-    yield from option_lines
-    yield "```"
-    yield ""
+        if not option_lines:  # pragma: no cover
+            # We expect at least `--help` to be present.
+            raise RuntimeError("Expected at least one option")
+
+        yield "**Options:**"
+        yield ""
+        yield "```"
+        yield from option_lines
+        yield "```"
+        yield ""
 
 
 # Unicode "Vertical Line" character (U+007C), HTML-compatible.
@@ -251,10 +275,11 @@ def _format_table_option_row(option: click.Option) -> str:
     return f"| {names} | {value_type} | {description} | {default} |"
 
 
-def _make_table_options(ctx: click.Context) -> Iterator[str]:
+def _make_table_options(ctx: click.Context, show_hidden: bool = False) -> Iterator[str]:
     """Create the table style options description."""
 
     options = [param for param in ctx.command.get_params(ctx) if isinstance(param, click.Option)]
+    options = [option for option in options if not option.hidden or show_hidden]
     option_rows = [_format_table_option_row(option) for option in options]
 
     yield "**Options:**"

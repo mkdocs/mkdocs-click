@@ -231,3 +231,39 @@ def test_custom_multicommand(multi):
 
     output = "\n".join(make_command_docs("multi", multi))
     assert output == expected
+
+
+@pytest.mark.parametrize("show_hidden", [True, False])
+@pytest.mark.parametrize("style", ["plain", "table"])
+def test_show_hidden_option(show_hidden, style):
+    @click.command()
+    @click.option("--hidden", hidden=True)
+    def _test_cmd(hidden):
+        """Test cmd."""
+
+    output = "\n".join(make_command_docs("_test_cmd", _test_cmd, style=style, show_hidden=show_hidden))
+    assert ("--hidden" in output) == show_hidden
+
+
+@pytest.mark.parametrize("show_hidden", [True, False])
+def test_show_hidden_command(show_hidden):
+    @click.command(hidden=True)
+    def _test_cmd():
+        """Test cmd."""
+
+    output = "\n".join(make_command_docs("_test_cmd", _test_cmd, show_hidden=show_hidden))
+    assert (output != "") == show_hidden
+
+
+@pytest.mark.parametrize("show_hidden", [True, False])
+def test_show_hidden_group(show_hidden):
+    @click.group(hidden=True)
+    def _test_group():
+        """Test group."""
+
+    @_test_group.command(hidden=False)
+    def _test_cmd():
+        """Test cmd."""
+
+    output = "\n".join(make_command_docs("_test_group", _test_group, show_hidden=show_hidden))
+    assert (output != "") == show_hidden
