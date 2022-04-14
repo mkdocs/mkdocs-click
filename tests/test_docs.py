@@ -2,11 +2,12 @@
 # All rights reserved
 # Licensed under the Apache license (see LICENSE)
 from textwrap import dedent
+from typing import cast
 
 import click
 import pytest
 
-from mkdocs_click._docs import make_command_docs
+from mkdocs_click._docs import make_command_docs, _show_options
 from mkdocs_click._exceptions import MkDocsClickException
 
 
@@ -267,3 +268,25 @@ def test_show_hidden_group(show_hidden):
 
     output = "\n".join(make_command_docs("_test_group", _test_group, show_hidden=show_hidden))
     assert (output != "") == show_hidden
+
+
+def test_show_options():
+    @click.command()
+    @click.option("--hidden", hidden=True)
+    @click.option("--normal", hidden=False)
+    def _test_cmd(hidden, normal):
+        """Test cmd."""
+
+    ctx = click.Context(cast(click.Command, _test_cmd), info_name="_test_cmd")
+    opt_hidden = cast(click.Option, ctx.command.params[0])
+    opt_normal = cast(click.Option, ctx.command.params[1])
+
+    assert opt_hidden.hidden
+    assert not opt_normal.hidden
+
+    with _show_options(ctx):
+        assert not opt_hidden.hidden
+        assert not opt_normal.hidden
+
+    assert opt_hidden.hidden
+    assert not opt_normal.hidden
