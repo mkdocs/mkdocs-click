@@ -9,7 +9,8 @@ NOT_A_COMMAND = "not-a-command"
 @click.command()
 @click.option("--count", default=1, help="Number of greetings.")
 @click.option("--name", prompt="Your name", help="The person to greet.")
-def hello(count, name):
+@click.option("--hidden", hidden=True)
+def hello(count, name, hidden):
     """Simple program that greets NAME for a total of COUNT times."""
 
 
@@ -33,13 +34,20 @@ def bar():
     """The bar command"""
 
 
+@click.command(hidden=True)
+def hidden():
+    """The hidden command"""
+
+
 bar.add_command(hello)
 
 cli.add_command(foo)
 cli.add_command(bar)
+cli.add_command(hidden)
 
 cli_named.add_command(foo)
 cli_named.add_command(bar)
+cli_named.add_command(hidden)
 
 
 class MultiCLI(click.MultiCommand):

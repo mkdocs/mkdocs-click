@@ -24,6 +24,7 @@ def replace_command_docs(has_attr_list: bool = False, **options: Any) -> Iterato
     depth = int(options.get("depth", 0))
     style = options.get("style", "plain")
     remove_ascii_art = options.get("remove_ascii_art", False)
+    show_hidden = options.get("show_hidden", False)
 
     command_obj = load_command(module, command)
 
@@ -35,6 +36,7 @@ def replace_command_docs(has_attr_list: bool = False, **options: Any) -> Iterato
         depth=depth,
         style=style,
         remove_ascii_art=remove_ascii_art,
+        show_hidden=show_hidden,
         has_attr_list=has_attr_list,
     )
 

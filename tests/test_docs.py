@@ -2,11 +2,12 @@
 # All rights reserved
 # Licensed under the Apache license (see LICENSE)
 from textwrap import dedent
+from typing import cast
 
 import click
 import pytest
 
-from mkdocs_click._docs import make_command_docs
+from mkdocs_click._docs import make_command_docs, _show_options
 from mkdocs_click._exceptions import MkDocsClickException
 
 
@@ -231,3 +232,61 @@ def test_custom_multicommand(multi):
 
     output = "\n".join(make_command_docs("multi", multi))
     assert output == expected
+
+
+@pytest.mark.parametrize("show_hidden", [True, False])
+@pytest.mark.parametrize("style", ["plain", "table"])
+def test_show_hidden_option(show_hidden, style):
+    @click.command()
+    @click.option("--hidden", hidden=True)
+    def _test_cmd(hidden):
+        """Test cmd."""
+
+    output = "\n".join(make_command_docs("_test_cmd", _test_cmd, style=style, show_hidden=show_hidden))
+    assert ("--hidden" in output) == show_hidden
+
+
+@pytest.mark.parametrize("show_hidden", [True, False])
+def test_show_hidden_command(show_hidden):
+    @click.command(hidden=True)
+    def _test_cmd():
+        """Test cmd."""
+
+    output = "\n".join(make_command_docs("_test_cmd", _test_cmd, show_hidden=show_hidden))
+    assert (output != "") == show_hidden
+
+
+@pytest.mark.parametrize("show_hidden", [True, False])
+def test_show_hidden_group(show_hidden):
+    @click.group(hidden=True)
+    def _test_group():
+        """Test group."""
+
+    @_test_group.command(hidden=False)
+    def _test_cmd():
+        """Test cmd."""
+
+    output = "\n".join(make_command_docs("_test_group", _test_group, show_hidden=show_hidden))
+    assert (output != "") == show_hidden
+
+
+def test_show_options():
+    @click.command()
+    @click.option("--hidden", hidden=True)
+    @click.option("--normal", hidden=False)
+    def _test_cmd(hidden, normal):
+        """Test cmd."""
+
+    ctx = click.Context(cast(click.Command, _test_cmd), info_name="_test_cmd")
+    opt_hidden = cast(click.Option, ctx.command.params[0])
+    opt_normal = cast(click.Option, ctx.command.params[1])
+
+    assert opt_hidden.hidden
+    assert not opt_normal.hidden
+
+    with _show_options(ctx):
+        assert not opt_hidden.hidden
+        assert not opt_normal.hidden
+
+    assert opt_hidden.hidden
+    assert not opt_normal.hidden
