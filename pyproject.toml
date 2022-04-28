@@ -1,3 +1,54 @@
+[build-system]
+requires = ["hatchling>=0.22.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mkdocs-click"
+description = "An MkDocs extension to generate documentation for Click command line applications"
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.7"
+authors = [
+    { name = "Datadog", email = "packages@datadoghq.com" },
+]
+keywords = [
+    "click",
+    "datadog",
+    "mkdocs",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+]
+dependencies = [
+    "click~=8.1",
+    "markdown==3.*",
+]
+dynamic = ["version"]
+
+[project.entry-points."markdown.extensions"]
+mkdocs-click = "mkdocs_click:MKClickExtension"
+
+[project.urls]
+Homepage = "https://github.com/DataDog/mkdocs-click"
+Changelog = "https://github.com/DataDog/mkdocs-click/blob/master/CHANGELOG.md"
+
+[tool.hatch.version]
+path = "mkdocs_click/__version__.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/mkdocs_click",
+    "/CHANGELOG.md",
+]
+
 [tool.black]
 line-length = 120
 target-version = ["py37"]
