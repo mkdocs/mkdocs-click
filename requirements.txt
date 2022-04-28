@@ -2,7 +2,7 @@
 
 # Packaging
 twine
-wheel
+build
 
 # Linters
 black==22.3.0
