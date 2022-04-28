@@ -75,7 +75,7 @@ def _get_sub_commands(command: click.Command, ctx: click.Context) -> List[click.
     """Return subcommands of a Click command."""
     subcommands = getattr(command, "commands", {})
     if subcommands:
-        return subcommands.values()
+        return subcommands.values()  # type: ignore
 
     if not isinstance(command, click.MultiCommand):
         return []
