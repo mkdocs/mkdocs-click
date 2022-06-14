@@ -211,6 +211,10 @@ def test_custom_multicommand(multi):
           --help  Show this message and exit.
         ```
 
+        **Subcommands**
+ 
+        - *hello*: Hello, world!
+
         ## hello
 
         Hello, world!

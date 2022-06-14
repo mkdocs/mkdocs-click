@@ -30,6 +30,10 @@ cli bar [OPTIONS] COMMAND [ARGS]...
   --help  Show this message and exit.
 ```
 
+**Subcommands**
+
+- *hello*: Simple program that greets NAME for a total of COUNT times.
+
 ### hello
 
 Simple program that greets NAME for a total of COUNT times.
