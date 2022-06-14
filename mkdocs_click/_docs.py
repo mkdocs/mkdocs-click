@@ -64,7 +64,7 @@ def _recursively_make_command_docs(
     if len(subcommands) == 0:
         return
 
-    subcommands.sort(key=lambda cmd: cmd.name)
+    subcommands.sort(key=lambda cmd: str(cmd.name))
 
     if list_subcommands:
         yield from _make_subcommands_links(subcommands, ctx, has_attr_list=has_attr_list)
@@ -81,7 +81,9 @@ def _recursively_make_command_docs(
         )
 
 
-def _build_command_context(prog_name: str, command: click.BaseCommand, parent: Optional[click.Context]):
+def _build_command_context(
+    prog_name: str, command: click.BaseCommand, parent: Optional[click.Context]
+) -> click.Context:
     return click.Context(cast(click.Command, command), info_name=prog_name, parent=parent)
 
 
@@ -168,7 +170,6 @@ def _make_description(ctx: click.Context, remove_ascii_art: bool = False) -> Ite
         if skipped_ascii_art:
             yield line
     yield ""
-
 
 
 def _make_usage(ctx: click.Context) -> Iterator[str]:
@@ -321,21 +322,17 @@ def _make_table_options(ctx: click.Context, show_hidden: bool = False) -> Iterat
 
 
 def _make_subcommands_links(
-    subcommands: List[click.BaseCommand],
-    parent: click.Context,
-    has_attr_list: bool
-):
+    subcommands: List[click.Command], parent: click.Context, has_attr_list: bool
+) -> Iterator[str]:
 
     yield "**Subcommands**"
     yield ""
     for command in subcommands:
         command_name = cast(str, command.name)
         ctx = _build_command_context(command_name, command, parent)
-        command_bullet = (
-            command_name
-            if not has_attr_list
-            else f"[{command_name}](#{slugify(ctx.command_path, '-')})"
-        )
-        help_string = ctx.command.short_help or ctx.command.help.splitlines()[0]
+        command_bullet = command_name if not has_attr_list else f"[{command_name}](#{slugify(ctx.command_path, '-')})"
+        help_string = ctx.command.short_help or ctx.command.help
+        if help_string is not None:
+            help_string = help_string.splitlines()[0]
         yield f"- *{command_bullet}*: {help_string}"
     yield ""
