@@ -18,7 +18,7 @@ def make_command_docs(
     style: str = "plain",
     remove_ascii_art: bool = False,
     show_hidden: bool = False,
-    list_subcommands: bool = True,
+    list_subcommands: bool = False,
     has_attr_list: bool = False,
 ) -> Iterator[str]:
     """Create the Markdown lines for a command and its sub-commands."""
@@ -46,7 +46,7 @@ def _recursively_make_command_docs(
     style: str = "plain",
     remove_ascii_art: bool = False,
     show_hidden: bool = False,
-    list_subcommands: bool = True,
+    list_subcommands: bool = False,
     has_attr_list: bool = False,
 ) -> Iterator[str]:
     """Create the raw Markdown lines for a command and its sub-commands."""
@@ -67,7 +67,12 @@ def _recursively_make_command_docs(
     subcommands.sort(key=lambda cmd: str(cmd.name))
 
     if list_subcommands:
-        yield from _make_subcommands_links(subcommands, ctx, has_attr_list=has_attr_list)
+        yield from _make_subcommands_links(
+            subcommands,
+            ctx,
+            has_attr_list=has_attr_list,
+            show_hidden=show_hidden,
+        )
 
     for command in subcommands:
         yield from _recursively_make_command_docs(
@@ -77,6 +82,7 @@ def _recursively_make_command_docs(
             depth=depth + 1,
             style=style,
             show_hidden=show_hidden,
+            list_subcommands=list_subcommands,
             has_attr_list=has_attr_list,
         )
 
@@ -322,7 +328,10 @@ def _make_table_options(ctx: click.Context, show_hidden: bool = False) -> Iterat
 
 
 def _make_subcommands_links(
-    subcommands: List[click.Command], parent: click.Context, has_attr_list: bool
+    subcommands: List[click.Command],
+    parent: click.Context,
+    has_attr_list: bool,
+    show_hidden: bool,
 ) -> Iterator[str]:
 
     yield "**Subcommands**"
@@ -330,9 +339,13 @@ def _make_subcommands_links(
     for command in subcommands:
         command_name = cast(str, command.name)
         ctx = _build_command_context(command_name, command, parent)
+        if ctx.command.hidden and not show_hidden:
+            continue
         command_bullet = command_name if not has_attr_list else f"[{command_name}](#{slugify(ctx.command_path, '-')})"
         help_string = ctx.command.short_help or ctx.command.help
         if help_string is not None:
             help_string = help_string.splitlines()[0]
+        else:
+            help_string = "*No description was provided with this command.*"
         yield f"- *{command_bullet}*: {help_string}"
     yield ""
