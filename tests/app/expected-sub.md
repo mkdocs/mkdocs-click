@@ -1,4 +1,4 @@
-# cli { #cli data-toc-label="cli" }
+# cli
 
 Main entrypoint for this dummy program
 
@@ -14,7 +14,12 @@ cli [OPTIONS] COMMAND [ARGS]...
   --help  Show this message and exit.
 ```
 
-## cli bar { #cli-bar data-toc-label="bar" }
+**Subcommands**
+
+- *bar*: The bar command
+- *foo*: *No description was provided with this command.*
+
+## bar
 
 The bar command
 
@@ -30,7 +35,11 @@ cli bar [OPTIONS] COMMAND [ARGS]...
   --help  Show this message and exit.
 ```
 
-### cli bar hello { #cli-bar-hello data-toc-label="hello" }
+**Subcommands**
+
+- *hello*: Simple program that greets NAME for a total of COUNT times.
+
+### hello
 
 Simple program that greets NAME for a total of COUNT times.
 
@@ -48,7 +57,7 @@ cli bar hello [OPTIONS]
   --help           Show this message and exit.
 ```
 
-## cli foo { #cli-foo data-toc-label="foo" }
+## foo
 
 **Usage:**
 

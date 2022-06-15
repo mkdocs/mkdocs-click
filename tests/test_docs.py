@@ -211,8 +211,60 @@ def test_custom_multicommand(multi):
           --help  Show this message and exit.
         ```
 
+        ## hello
+
+        Hello, world!
+
+        **Usage:**
+
+        ```
+        multi hello [OPTIONS]
+        ```
+
+        **Options:**
+
+        ```
+          -d, --debug TEXT  Include debug output
+          --help            Show this message and exit.
+        ```
+        """
+    ).lstrip()
+
+    output = "\n".join(make_command_docs("multi", multi))
+    assert output == expected
+
+
+@pytest.mark.parametrize(
+    "multi",
+    [
+        pytest.param(MultiCLI("multi", help="Multi help"), id="explicit-name"),
+        pytest.param(MultiCLI(help="Multi help"), id="no-name"),
+    ],
+)
+def test_custom_multicommand_with_list_subcommands(multi):
+    """
+    Custom `MultiCommand` objects are supported (i.e. not just `Group` multi-commands).
+    """
+    expected = dedent(
+        """
+        # multi
+
+        Multi help
+
+        **Usage:**
+
+        ```
+        multi [OPTIONS] COMMAND [ARGS]...
+        ```
+
+        **Options:**
+
+        ```
+          --help  Show this message and exit.
+        ```
+
         **Subcommands**
- 
+
         - *hello*: Hello, world!
 
         ## hello
@@ -234,7 +286,7 @@ def test_custom_multicommand(multi):
         """
     ).lstrip()
 
-    output = "\n".join(make_command_docs("multi", multi))
+    output = "\n".join(make_command_docs("multi", multi, list_subcommands=True))
     assert output == expected
 
 
