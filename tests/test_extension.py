@@ -11,6 +11,8 @@ import mkdocs_click
 
 EXPECTED = (Path(__file__).parent / "app" / "expected.md").read_text()
 EXPECTED_ENHANCED = (Path(__file__).parent / "app" / "expected-enhanced.md").read_text()
+EXPECTED_SUB = (Path(__file__).parent / "app" / "expected-sub.md").read_text()
+EXPECTED_SUB_ENHANCED = (Path(__file__).parent / "app" / "expected-sub-enhanced.md").read_text()
 
 
 @pytest.mark.parametrize(
@@ -124,3 +126,64 @@ def test_enhanced_titles():
     )
 
     assert md.convert(source) == md.convert(EXPECTED_ENHANCED)
+
+
+@pytest.mark.parametrize(
+    "command, expected_name",
+    [
+        pytest.param("cli", "cli", id="cli-simple"),
+        pytest.param("cli_named", "cli", id="cli-explicit-name"),
+        pytest.param("multi_named", "multi", id="multi-explicit-name"),
+        pytest.param("multi", "multi", id="no-name"),
+    ],
+)
+def test_extension_with_subcommand(command, expected_name):
+    """
+    Markdown output for a relatively complex Click application is correct.
+    """
+    md = Markdown(extensions=[mkdocs_click.makeExtension()])
+
+    source = dedent(
+        f"""
+        ::: mkdocs-click
+            :module: tests.app.cli
+            :command: {command}
+            :list_subcommands: True
+        """
+    )
+
+    expected = EXPECTED_SUB.replace("cli", expected_name)
+
+    assert md.convert(source) == md.convert(expected)
+
+
+@pytest.mark.parametrize(
+    "command, expected_name",
+    [
+        pytest.param("cli", "cli", id="cli-simple"),
+        pytest.param("cli_named", "cli", id="cli-explicit-name"),
+        pytest.param("multi_named", "multi", id="multi-explicit-name"),
+        pytest.param("multi", "multi", id="no-name"),
+    ],
+)
+def test_enhanced_titles_with_subcommand(command, expected_name):
+    """
+    Markdown output for a relatively complex Click application is correct.
+    """
+    md = Markdown(extensions=["attr_list"])
+    # Register our extension as a second step, so that we see `attr_list`.
+    # This is what MkDocs does, so there's no hidden usage constraint here.
+    md.registerExtensions([mkdocs_click.makeExtension()], {})
+
+    source = dedent(
+        f"""
+        ::: mkdocs-click
+            :module: tests.app.cli
+            :command: {command}
+            :list_subcommands: True
+        """
+    )
+
+    expected = EXPECTED_SUB_ENHANCED.replace("cli", expected_name)
+
+    assert md.convert(source) == md.convert(expected)

@@ -27,6 +27,8 @@ def replace_blocks(lines: Iterable[str], title: str, replace: Callable[..., Iter
                 # New ':key:' or ':key: value' line, ingest it.
                 key = match.group("key")
                 value = match.group("value") or ""
+                if value.lower() in ["true", "false"]:
+                    value = True if value.lower() == "true" else False
                 options[key] = value
                 continue
 

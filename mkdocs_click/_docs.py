@@ -3,7 +3,7 @@
 # Licensed under the Apache license (see LICENSE)
 import inspect
 from contextlib import contextmanager, ExitStack
-from typing import Iterator, List, cast
+from typing import Iterator, List, cast, Optional
 
 import click
 from markdown.extensions.toc import slugify
@@ -18,6 +18,7 @@ def make_command_docs(
     style: str = "plain",
     remove_ascii_art: bool = False,
     show_hidden: bool = False,
+    list_subcommands: bool = False,
     has_attr_list: bool = False,
 ) -> Iterator[str]:
     """Create the Markdown lines for a command and its sub-commands."""
@@ -28,6 +29,7 @@ def make_command_docs(
         style=style,
         remove_ascii_art=remove_ascii_art,
         show_hidden=show_hidden,
+        list_subcommands=list_subcommands,
         has_attr_list=has_attr_list,
     ):
         if line.strip() == "\b":
@@ -44,10 +46,11 @@ def _recursively_make_command_docs(
     style: str = "plain",
     remove_ascii_art: bool = False,
     show_hidden: bool = False,
+    list_subcommands: bool = False,
     has_attr_list: bool = False,
 ) -> Iterator[str]:
     """Create the raw Markdown lines for a command and its sub-commands."""
-    ctx = click.Context(cast(click.Command, command), info_name=prog_name, parent=parent)
+    ctx = _build_command_context(prog_name=prog_name, command=command, parent=parent)
 
     if ctx.command.hidden and not show_hidden:
         return
@@ -58,8 +61,20 @@ def _recursively_make_command_docs(
     yield from _make_options(ctx, style, show_hidden=show_hidden)
 
     subcommands = _get_sub_commands(ctx.command, ctx)
+    if len(subcommands) == 0:
+        return
 
-    for command in sorted(subcommands, key=lambda cmd: cmd.name):  # type: ignore
+    subcommands.sort(key=lambda cmd: str(cmd.name))
+
+    if list_subcommands:
+        yield from _make_subcommands_links(
+            subcommands,
+            ctx,
+            has_attr_list=has_attr_list,
+            show_hidden=show_hidden,
+        )
+
+    for command in subcommands:
         yield from _recursively_make_command_docs(
             cast(str, command.name),
             command,
@@ -67,15 +82,22 @@ def _recursively_make_command_docs(
             depth=depth + 1,
             style=style,
             show_hidden=show_hidden,
+            list_subcommands=list_subcommands,
             has_attr_list=has_attr_list,
         )
+
+
+def _build_command_context(
+    prog_name: str, command: click.BaseCommand, parent: Optional[click.Context]
+) -> click.Context:
+    return click.Context(cast(click.Command, command), info_name=prog_name, parent=parent)
 
 
 def _get_sub_commands(command: click.Command, ctx: click.Context) -> List[click.Command]:
     """Return subcommands of a Click command."""
     subcommands = getattr(command, "commands", {})
     if subcommands:
-        return subcommands.values()  # type: ignore
+        return list(subcommands.values())
 
     if not isinstance(command, click.MultiCommand):
         return []
@@ -131,26 +153,29 @@ def _make_description(ctx: click.Context, remove_ascii_art: bool = False) -> Ite
     """Create markdown lines based on the command's own description."""
     help_string = ctx.command.help or ctx.command.short_help
 
-    if help_string:
-        # https://github.com/pallets/click/pull/2151
-        help_string = inspect.cleandoc(help_string)
+    if not help_string:
+        return
 
-        if remove_ascii_art:
-            skipped_ascii_art = True
-            for i, line in enumerate(help_string.splitlines()):
-                if skipped_ascii_art is False:
-                    if not line.strip():
-                        skipped_ascii_art = True
-                        continue
-                elif i == 0 and line.strip() == "\b":
-                    skipped_ascii_art = False
+    # https://github.com/pallets/click/pull/2151
+    help_string = inspect.cleandoc(help_string)
 
-                if skipped_ascii_art:
-                    yield line
-        else:
-            yield from help_string.splitlines()
-
+    if not remove_ascii_art:
+        yield from help_string.splitlines()
         yield ""
+        return
+
+    skipped_ascii_art = True
+    for i, line in enumerate(help_string.splitlines()):
+        if skipped_ascii_art is False:
+            if not line.strip():
+                skipped_ascii_art = True
+                continue
+        elif i == 0 and line.strip() == "\b":
+            skipped_ascii_art = False
+
+        if skipped_ascii_art:
+            yield line
+    yield ""
 
 
 def _make_usage(ctx: click.Context) -> Iterator[str]:
@@ -299,4 +324,28 @@ def _make_table_options(ctx: click.Context, show_hidden: bool = False) -> Iterat
     yield "| Name | Type | Description | Default |"
     yield "| ---- | ---- | ----------- | ------- |"
     yield from option_rows
+    yield ""
+
+
+def _make_subcommands_links(
+    subcommands: List[click.Command],
+    parent: click.Context,
+    has_attr_list: bool,
+    show_hidden: bool,
+) -> Iterator[str]:
+
+    yield "**Subcommands**"
+    yield ""
+    for command in subcommands:
+        command_name = cast(str, command.name)
+        ctx = _build_command_context(command_name, command, parent)
+        if ctx.command.hidden and not show_hidden:
+            continue
+        command_bullet = command_name if not has_attr_list else f"[{command_name}](#{slugify(ctx.command_path, '-')})"
+        help_string = ctx.command.short_help or ctx.command.help
+        if help_string is not None:
+            help_string = help_string.splitlines()[0]
+        else:
+            help_string = "*No description was provided with this command.*"
+        yield f"- *{command_bullet}*: {help_string}"
     yield ""
