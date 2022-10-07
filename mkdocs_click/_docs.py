@@ -189,7 +189,7 @@ def _make_usage(ctx: click.Context) -> Iterator[str]:
 
     yield "**Usage:**"
     yield ""
-    yield "```"
+    yield "```text"
     yield usage
     yield "```"
     yield ""
@@ -240,7 +240,7 @@ def _make_plain_options(ctx: click.Context, show_hidden: bool = False) -> Iterat
 
         yield "**Options:**"
         yield ""
-        yield "```"
+        yield "```text"
         yield from option_lines
         yield "```"
         yield ""

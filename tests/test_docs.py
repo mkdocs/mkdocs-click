@@ -50,13 +50,13 @@ HELLO_EXPECTED = dedent(
 
     **Usage:**
 
-    ```
+    ```text
     hello [OPTIONS]
     ```
 
     **Options:**
 
-    ```
+    ```text
       -d, --debug TEXT  Include debug output
       --help            Show this message and exit.
     ```
@@ -116,7 +116,7 @@ HELLO_FULL_TABLE_EXPECTED = dedent(
 
     **Usage:**
 
-    ```
+    ```text
     hello [OPTIONS]
     ```
 
@@ -149,7 +149,7 @@ HELLO_MINIMAL_TABLE_EXPECTED = dedent(
 
     **Usage:**
 
-    ```
+    ```text
     hello [OPTIONS]
     ```
 
@@ -201,13 +201,13 @@ def test_custom_multicommand(multi):
 
         **Usage:**
 
-        ```
+        ```text
         multi [OPTIONS] COMMAND [ARGS]...
         ```
 
         **Options:**
 
-        ```
+        ```text
           --help  Show this message and exit.
         ```
 
@@ -217,13 +217,13 @@ def test_custom_multicommand(multi):
 
         **Usage:**
 
-        ```
+        ```text
         multi hello [OPTIONS]
         ```
 
         **Options:**
 
-        ```
+        ```text
           -d, --debug TEXT  Include debug output
           --help            Show this message and exit.
         ```
@@ -253,13 +253,13 @@ def test_custom_multicommand_with_list_subcommands(multi):
 
         **Usage:**
 
-        ```
+        ```text
         multi [OPTIONS] COMMAND [ARGS]...
         ```
 
         **Options:**
 
-        ```
+        ```text
           --help  Show this message and exit.
         ```
 
@@ -273,13 +273,13 @@ def test_custom_multicommand_with_list_subcommands(multi):
 
         **Usage:**
 
-        ```
+        ```text
         multi hello [OPTIONS]
         ```
 
         **Options:**
 
-        ```
+        ```text
           -d, --debug TEXT  Include debug output
           --help            Show this message and exit.
         ```
