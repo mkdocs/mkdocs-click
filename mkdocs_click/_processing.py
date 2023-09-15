@@ -45,3 +45,6 @@ def replace_blocks(lines: Iterable[str], title: str, replace: Callable[..., Iter
             options = {}
         else:
             yield line
+
+    if in_block_section:
+        yield from replace(**options)

@@ -36,7 +36,7 @@ def test_extension(command, expected_name):
             :module: tests.app.cli
             :command: {command}
         """
-    )
+    ).rstrip()
 
     expected = EXPECTED.replace("cli", expected_name)
 
