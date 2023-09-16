@@ -1,8 +1,0 @@
-#! /bin/sh -e
-
-BIN="venv/bin/"
-FILES="mkdocs_click tests"
-
-set -x
-
-${BIN}black $FILES
