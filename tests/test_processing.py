@@ -25,7 +25,11 @@ foo
 bar
 """.strip()
 
-    output = list(replace_blocks(source.splitlines(), title="target", replace=lambda **options: [str(options)]))
+    output = list(
+        replace_blocks(
+            source.splitlines(), title="target", replace=lambda **options: [str(options)]
+        )
+    )
     assert output == expected.splitlines()
 
 
@@ -46,7 +50,9 @@ foo
 bar
 """.strip()
 
-    output = list(replace_blocks(source.splitlines(), title="target", replace=lambda **options: ["> mock"]))
+    output = list(
+        replace_blocks(source.splitlines(), title="target", replace=lambda **options: ["> mock"])
+    )
     assert output == expected.splitlines()
 
 

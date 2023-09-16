@@ -8,13 +8,7 @@ To start developing on this project, create a fork of this repository on GitHub,
 
 ```bash
 git clone https://github.com/<USERNAME>/mkdocs-click
-```
-
-You can now install development dependencies using:
-
-```bash
 cd mkdocs-click
-scripts/install
 ```
 
 ## Example docs site
@@ -22,27 +16,21 @@ scripts/install
 You can run the example docs site that lives in `example/` locally using:
 
 ```bash
-scripts/docs serve
+hatch run test:mkdocs serve -f example/mkdocs.yml
 ```
 
 ## Testing and linting
 
-Once dependencies are installed, you can run the test suite using:
+You can run the test suite using:
 
 ```bash
-scripts/test
+hatch run test:test
 ```
 
-You can run code auto-formatting using:
+You can run code auto-formatting and style checks using:
 
 ```bash
-scripts/format
-```
-
-To run style checks, use:
-
-```bash
-scripts/style
+hatch run style:fix
 ```
 
 ## Releasing

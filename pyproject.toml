@@ -7,48 +7,129 @@ name = "mkdocs-click"
 description = "An MkDocs extension to generate documentation for Click command line applications"
 readme = "README.md"
 license = "Apache-2.0"
-requires-python = ">=3.7"
+keywords = ["click", "datadog", "mkdocs", "mkdocs-plugin"]
 authors = [
-    { name = "Datadog", email = "packages@datadoghq.com" },
-]
-keywords = [
-    "click",
-    "datadog",
-    "mkdocs",
+    {name = "Datadog", email = "packages@datadoghq.com"},
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Environment :: Web Environment",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3",
+    "Programming Language :: Python",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
-]
-dependencies = [
-    "click~=8.1",
-    "markdown==3.*",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Documentation",
+    "Topic :: Software Development :: Documentation",
+    "Topic :: Text Processing :: Markup :: Markdown",
+    "Typing :: Typed",
 ]
 dynamic = ["version"]
+requires-python = ">=3.7"
+dependencies = [
+    "click >=8.1",
+    "markdown >=3.3",
+    #min "importlib_metadata >=4.3",
+]
+
+[project.urls]
+Source = "https://github.com/mkdocs/mkdocs-click"
+Issues = "https://github.com/mkdocs/mkdocs-click/issues"
+Changelog = "https://github.com/mkdocs/mkdocs-click/blob/master/CHANGELOG.md"
 
 [project.entry-points."markdown.extensions"]
 mkdocs-click = "mkdocs_click:MKClickExtension"
-
-[project.urls]
-Homepage = "https://github.com/DataDog/mkdocs-click"
-Changelog = "https://github.com/DataDog/mkdocs-click/blob/master/CHANGELOG.md"
 
 [tool.hatch.version]
 path = "mkdocs_click/__version__.py"
 
 [tool.hatch.build.targets.sdist]
-include = [
-    "/mkdocs_click",
-    "/CHANGELOG.md",
+include = ["/mkdocs_click", "/CHANGELOG.md", "/tests"]
+
+[tool.hatch.envs.default.scripts]
+all = [
+    "hatch run style:fix",
+    "hatch run types:check",
+    "hatch run test:test",
+]
+
+[tool.hatch.envs.test]
+dependencies = [
+    "pytest",
+    "mkdocs >=1.1.2",
+    #min "jinja2 >=2.11.1",
+    #min "markupsafe >=2.0.1",
+]
+[tool.hatch.envs.test.scripts]
+test = [
+    "pytest -q",
+    "mkdocs build -q --strict -f example/mkdocs.yml",
+]
+
+[tool.hatch.envs.types]
+dependencies = [
+    "mypy",
+    "types-Markdown >=3.4.2",
+]
+[tool.hatch.envs.types.scripts]
+check = [
+    "mypy mkdocs_click"
+]
+
+[tool.hatch.envs.style]
+skip-install = true
+dependencies = [
+    "ruff",
+    "isort",
+    "black",
+]
+[tool.hatch.envs.style.scripts]
+fix = [
+    "ruff check --fix mkdocs_click tests",
+    "format",
+]
+format = [
+    "isort -q mkdocs_click tests",
+    "black -q mkdocs_click tests",
 ]
 
 [tool.black]
-line-length = 120
-target-version = ["py37"]
+line-length = 100
+
+[tool.isort]
+profile = "black"
+line_length = 100
+
+[tool.ruff]
+select = [
+    "F", "W", "E", "UP", "YTT", "C4", "FA", "PIE", "T20", "RSE", "TCH", "DTZ",
+    "B002", "B003", "B005", "B007", "B009", "B012", "B013", "B014", "B015", "B018", "B020", "B021", "B023", "B026", "B033", "B034", "B905",
+    "COM818",
+    "PERF101",
+    "PGH002", "PGH004", "PGH005",
+    "PLE", "PLW0120", "PLW0127",
+    "RUF001", "RUF007", "RUF010", "RUF100", "RUF200",
+    "SIM101", "SIM107", "SIM201", "SIM202", "SIM208", "SIM210", "SIM211", "SIM300", "SIM401", "SIM910",
+]
+ignore = ["E501", "E731"]
+[tool.ruff.flake8-comprehensions]
+allow-dict-calls-with-keyword-arguments = true
+
+[tool.mypy]
+disallow_untyped_defs = true
+ignore_missing_imports = true
+warn_unreachable = true
+no_implicit_optional = true
+show_error_codes = true
+
+[tool.pytest.ini_options]
+addopts = "--tb=native"
+enable_assertion_pass_hook = true
+filterwarnings = ["ignore::DeprecationWarning:.*:",
+                  "default::DeprecationWarning:mkdocs_click.*:"]
+testpaths = ["tests"]

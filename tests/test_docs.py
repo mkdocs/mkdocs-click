@@ -7,7 +7,7 @@ from typing import cast
 import click
 import pytest
 
-from mkdocs_click._docs import make_command_docs, _show_options
+from mkdocs_click._docs import _show_options, make_command_docs
 from mkdocs_click._exceptions import MkDocsClickException
 
 
@@ -81,7 +81,8 @@ def test_prog_name():
 
 def test_style_invalid():
     with pytest.raises(
-        MkDocsClickException, match="invalid is not a valid option style, which must be either `plain` or `table`."
+        MkDocsClickException,
+        match="invalid is not a valid option style, which must be either `plain` or `table`.",
     ):
         list(make_command_docs("hello", hello, style="invalid"))
 
@@ -298,7 +299,9 @@ def test_show_hidden_option(show_hidden, style):
     def _test_cmd(hidden):
         """Test cmd."""
 
-    output = "\n".join(make_command_docs("_test_cmd", _test_cmd, style=style, show_hidden=show_hidden))
+    output = "\n".join(
+        make_command_docs("_test_cmd", _test_cmd, style=style, show_hidden=show_hidden)
+    )
     assert ("--hidden" in output) == show_hidden
 
 

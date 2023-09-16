@@ -3,8 +3,6 @@
 site_name: mkdocs-click example
 theme: readthedocs
 
-docs_dir: example
-
 markdown_extensions:
   - attr_list
   - mkdocs-click

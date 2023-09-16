@@ -1,8 +1,0 @@
-#! /bin/sh -e
-
-BIN="venv/bin/"
-
-set -x
-
-${BIN}python -m build
-${BIN}twine check dist/*

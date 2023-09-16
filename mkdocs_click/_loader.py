@@ -1,10 +1,13 @@
 # (C) Datadog, Inc. 2020-present
 # All rights reserved
 # Licensed under the Apache license (see LICENSE)
+from __future__ import annotations
+
 import importlib
 from typing import Any
 
 import click
+
 from ._exceptions import MkDocsClickException
 
 
@@ -15,7 +18,9 @@ def load_command(module: str, attribute: str) -> click.BaseCommand:
     command = _load_obj(module, attribute)
 
     if not isinstance(command, click.BaseCommand):
-        raise MkDocsClickException(f"{attribute!r} must be a 'click.BaseCommand' object, got {type(command)}")
+        raise MkDocsClickException(
+            f"{attribute!r} must be a 'click.BaseCommand' object, got {type(command)}"
+        )
 
     return command
 

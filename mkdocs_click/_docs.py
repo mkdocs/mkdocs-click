@@ -1,9 +1,11 @@
 # (C) Datadog, Inc. 2020-present
 # All rights reserved
 # Licensed under the Apache license (see LICENSE)
+from __future__ import annotations
+
 import inspect
-from contextlib import contextmanager, ExitStack
-from typing import Iterator, List, cast, Optional
+from contextlib import ExitStack, contextmanager
+from typing import Iterator, cast
 
 import click
 from markdown.extensions.toc import slugify
@@ -41,7 +43,7 @@ def make_command_docs(
 def _recursively_make_command_docs(
     prog_name: str,
     command: click.BaseCommand,
-    parent: click.Context = None,
+    parent: click.Context | None = None,
     depth: int = 0,
     style: str = "plain",
     remove_ascii_art: bool = False,
@@ -88,12 +90,12 @@ def _recursively_make_command_docs(
 
 
 def _build_command_context(
-    prog_name: str, command: click.BaseCommand, parent: Optional[click.Context]
+    prog_name: str, command: click.BaseCommand, parent: click.Context | None
 ) -> click.Context:
     return click.Context(cast(click.Command, command), info_name=prog_name, parent=parent)
 
 
-def _get_sub_commands(command: click.Command, ctx: click.Context) -> List[click.Command]:
+def _get_sub_commands(command: click.Command, ctx: click.Context) -> list[click.Command]:
     """Return subcommands of a Click command."""
     subcommands = getattr(command, "commands", {})
     if subcommands:
@@ -195,7 +197,9 @@ def _make_usage(ctx: click.Context) -> Iterator[str]:
     yield ""
 
 
-def _make_options(ctx: click.Context, style: str = "plain", show_hidden: bool = False) -> Iterator[str]:
+def _make_options(
+    ctx: click.Context, style: str = "plain", show_hidden: bool = False
+) -> Iterator[str]:
     """Create the Markdown lines describing the options for the command."""
 
     if style == "plain":
@@ -203,13 +207,17 @@ def _make_options(ctx: click.Context, style: str = "plain", show_hidden: bool = 
     elif style == "table":
         return _make_table_options(ctx, show_hidden=show_hidden)
     else:
-        raise MkDocsClickException(f"{style} is not a valid option style, which must be either `plain` or `table`.")
+        raise MkDocsClickException(
+            f"{style} is not a valid option style, which must be either `plain` or `table`."
+        )
 
 
 @contextmanager
 def _show_options(ctx: click.Context) -> Iterator[None]:
     """Context manager that temporarily shows all hidden options."""
-    options = [opt for opt in ctx.command.get_params(ctx) if isinstance(opt, click.Option) and opt.hidden]
+    options = [
+        opt for opt in ctx.command.get_params(ctx) if isinstance(opt, click.Option) and opt.hidden
+    ]
 
     try:
         for option in options:
@@ -328,12 +336,11 @@ def _make_table_options(ctx: click.Context, show_hidden: bool = False) -> Iterat
 
 
 def _make_subcommands_links(
-    subcommands: List[click.Command],
+    subcommands: list[click.Command],
     parent: click.Context,
     has_attr_list: bool,
     show_hidden: bool,
 ) -> Iterator[str]:
-
     yield "**Subcommands**"
     yield ""
     for command in subcommands:
@@ -341,7 +348,11 @@ def _make_subcommands_links(
         ctx = _build_command_context(command_name, command, parent)
         if ctx.command.hidden and not show_hidden:
             continue
-        command_bullet = command_name if not has_attr_list else f"[{command_name}](#{slugify(ctx.command_path, '-')})"
+        command_bullet = (
+            command_name
+            if not has_attr_list
+            else f"[{command_name}](#{slugify(ctx.command_path, '-')})"
+        )
         help_string = ctx.command.short_help or ctx.command.help
         if help_string is not None:
             help_string = help_string.splitlines()[0]

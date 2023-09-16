@@ -13,7 +13,9 @@ from mkdocs_click._loader import load_command
     "module, command, exc",
     [
         pytest.param("tests.app.cli", "cli", None, id="ok"),
-        pytest.param("tests.app.cli", "doesnotexist", MkDocsClickException, id="command-does-not-exist"),
+        pytest.param(
+            "tests.app.cli", "doesnotexist", MkDocsClickException, id="command-does-not-exist"
+        ),
         pytest.param("doesnotexist", "cli", ImportError, id="module-does-not-exist"),
         pytest.param("tests.app.cli", "NOT_A_COMMAND", MkDocsClickException, id="not-a-command"),
     ],
