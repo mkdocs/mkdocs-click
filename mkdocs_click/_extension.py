@@ -48,14 +48,18 @@ def replace_command_docs(has_attr_list: bool = False, **options: Any) -> Iterato
 class ClickProcessor(Preprocessor):
     def __init__(self, md: Any) -> None:
         super().__init__(md)
-        self._has_attr_list = any(isinstance(ext, AttrListExtension) for ext in md.registeredExtensions)
+        self._has_attr_list = any(
+            isinstance(ext, AttrListExtension) for ext in md.registeredExtensions
+        )
 
     def run(self, lines: list[str]) -> list[str]:
         return list(
             replace_blocks(
                 lines,
                 title="mkdocs-click",
-                replace=lambda **options: replace_command_docs(has_attr_list=self._has_attr_list, **options),
+                replace=lambda **options: replace_command_docs(
+                    has_attr_list=self._has_attr_list, **options
+                ),
             )
         )
 

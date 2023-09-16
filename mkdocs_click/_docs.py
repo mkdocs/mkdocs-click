@@ -89,7 +89,9 @@ def _recursively_make_command_docs(
         )
 
 
-def _build_command_context(prog_name: str, command: click.BaseCommand, parent: click.Context | None) -> click.Context:
+def _build_command_context(
+    prog_name: str, command: click.BaseCommand, parent: click.Context | None
+) -> click.Context:
     return click.Context(cast(click.Command, command), info_name=prog_name, parent=parent)
 
 
@@ -195,7 +197,9 @@ def _make_usage(ctx: click.Context) -> Iterator[str]:
     yield ""
 
 
-def _make_options(ctx: click.Context, style: str = "plain", show_hidden: bool = False) -> Iterator[str]:
+def _make_options(
+    ctx: click.Context, style: str = "plain", show_hidden: bool = False
+) -> Iterator[str]:
     """Create the Markdown lines describing the options for the command."""
 
     if style == "plain":
@@ -203,13 +207,17 @@ def _make_options(ctx: click.Context, style: str = "plain", show_hidden: bool = 
     elif style == "table":
         return _make_table_options(ctx, show_hidden=show_hidden)
     else:
-        raise MkDocsClickException(f"{style} is not a valid option style, which must be either `plain` or `table`.")
+        raise MkDocsClickException(
+            f"{style} is not a valid option style, which must be either `plain` or `table`."
+        )
 
 
 @contextmanager
 def _show_options(ctx: click.Context) -> Iterator[None]:
     """Context manager that temporarily shows all hidden options."""
-    options = [opt for opt in ctx.command.get_params(ctx) if isinstance(opt, click.Option) and opt.hidden]
+    options = [
+        opt for opt in ctx.command.get_params(ctx) if isinstance(opt, click.Option) and opt.hidden
+    ]
 
     try:
         for option in options:
@@ -340,7 +348,11 @@ def _make_subcommands_links(
         ctx = _build_command_context(command_name, command, parent)
         if ctx.command.hidden and not show_hidden:
             continue
-        command_bullet = command_name if not has_attr_list else f"[{command_name}](#{slugify(ctx.command_path, '-')})"
+        command_bullet = (
+            command_name
+            if not has_attr_list
+            else f"[{command_name}](#{slugify(ctx.command_path, '-')})"
+        )
         help_string = ctx.command.short_help or ctx.command.help
         if help_string is not None:
             help_string = help_string.splitlines()[0]

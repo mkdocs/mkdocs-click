@@ -7,7 +7,9 @@ import re
 from typing import Callable, Iterable, Iterator
 
 
-def replace_blocks(lines: Iterable[str], title: str, replace: Callable[..., Iterable[str]]) -> Iterator[str]:
+def replace_blocks(
+    lines: Iterable[str], title: str, replace: Callable[..., Iterable[str]]
+) -> Iterator[str]:
     """
     Find blocks of lines in the form of:
 

@@ -18,7 +18,9 @@ def load_command(module: str, attribute: str) -> click.BaseCommand:
     command = _load_obj(module, attribute)
 
     if not isinstance(command, click.BaseCommand):
-        raise MkDocsClickException(f"{attribute!r} must be a 'click.BaseCommand' object, got {type(command)}")
+        raise MkDocsClickException(
+            f"{attribute!r} must be a 'click.BaseCommand' object, got {type(command)}"
+        )
 
     return command
 
