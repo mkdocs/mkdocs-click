@@ -1,6 +1,8 @@
 # (C) Datadog, Inc. 2020-present
 # All rights reserved
 # Licensed under the Apache license (see LICENSE)
+from __future__ import annotations
+
 import re
 from typing import Callable, Iterable, Iterator
 
@@ -28,7 +30,7 @@ def replace_blocks(lines: Iterable[str], title: str, replace: Callable[..., Iter
                 key = match.group("key")
                 value = match.group("value") or ""
                 if value.lower() in ["true", "false"]:
-                    value = True if value.lower() == "true" else False
+                    value = value.lower() == "true"
                 options[key] = value
                 continue
 

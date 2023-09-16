@@ -1,9 +1,11 @@
 # (C) Datadog, Inc. 2020-present
 # All rights reserved
 # Licensed under the Apache license (see LICENSE)
+from __future__ import annotations
+
 import inspect
-from contextlib import contextmanager, ExitStack
-from typing import Iterator, List, cast, Optional
+from contextlib import ExitStack, contextmanager
+from typing import Iterator, cast
 
 import click
 from markdown.extensions.toc import slugify
@@ -41,7 +43,7 @@ def make_command_docs(
 def _recursively_make_command_docs(
     prog_name: str,
     command: click.BaseCommand,
-    parent: click.Context = None,
+    parent: click.Context | None = None,
     depth: int = 0,
     style: str = "plain",
     remove_ascii_art: bool = False,
@@ -87,13 +89,11 @@ def _recursively_make_command_docs(
         )
 
 
-def _build_command_context(
-    prog_name: str, command: click.BaseCommand, parent: Optional[click.Context]
-) -> click.Context:
+def _build_command_context(prog_name: str, command: click.BaseCommand, parent: click.Context | None) -> click.Context:
     return click.Context(cast(click.Command, command), info_name=prog_name, parent=parent)
 
 
-def _get_sub_commands(command: click.Command, ctx: click.Context) -> List[click.Command]:
+def _get_sub_commands(command: click.Command, ctx: click.Context) -> list[click.Command]:
     """Return subcommands of a Click command."""
     subcommands = getattr(command, "commands", {})
     if subcommands:
@@ -328,12 +328,11 @@ def _make_table_options(ctx: click.Context, show_hidden: bool = False) -> Iterat
 
 
 def _make_subcommands_links(
-    subcommands: List[click.Command],
+    subcommands: list[click.Command],
     parent: click.Context,
     has_attr_list: bool,
     show_hidden: bool,
 ) -> Iterator[str]:
-
     yield "**Subcommands**"
     yield ""
     for command in subcommands:

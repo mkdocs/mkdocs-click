@@ -1,7 +1,9 @@
 # (C) Datadog, Inc. 2020-present
 # All rights reserved
 # Licensed under the Apache license (see LICENSE)
-from typing import Any, Iterator, List
+from __future__ import annotations
+
+from typing import Any, Iterator
 
 from markdown.extensions import Extension
 from markdown.extensions.attr_list import AttrListExtension
@@ -48,7 +50,7 @@ class ClickProcessor(Preprocessor):
         super().__init__(md)
         self._has_attr_list = any(isinstance(ext, AttrListExtension) for ext in md.registeredExtensions)
 
-    def run(self, lines: List[str]) -> List[str]:
+    def run(self, lines: list[str]) -> list[str]:
         return list(
             replace_blocks(
                 lines,

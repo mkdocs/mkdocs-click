@@ -7,7 +7,7 @@ from typing import cast
 import click
 import pytest
 
-from mkdocs_click._docs import make_command_docs, _show_options
+from mkdocs_click._docs import _show_options, make_command_docs
 from mkdocs_click._exceptions import MkDocsClickException
 
 

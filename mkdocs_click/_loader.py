@@ -1,10 +1,13 @@
 # (C) Datadog, Inc. 2020-present
 # All rights reserved
 # Licensed under the Apache license (see LICENSE)
+from __future__ import annotations
+
 import importlib
 from typing import Any
 
 import click
+
 from ._exceptions import MkDocsClickException
 
 
