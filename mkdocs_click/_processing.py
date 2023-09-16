@@ -49,3 +49,6 @@ def replace_blocks(
             options = {}
         else:
             yield line
+
+    if in_block_section:
+        yield from replace(**options)
