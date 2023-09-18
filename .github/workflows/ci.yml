@@ -13,17 +13,17 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - python: '^3.10'
+          - python: '^3.11'
             os: macos-latest
+          - python: '3.11'
+            os: windows-latest
           - python: '3.10'
-            os: windows-latest
-          - python: 3.9
             os: ubuntu-latest
-          - python: 3.8
+          - python: '3.9'
             os: macos-latest
-          - python: 3.7
+          - python: '3.8'
             os: windows-latest
-          - python: 3.7
+          - python: '3.8'
             os: ubuntu-latest
             versions: minimal
     runs-on: ${{matrix.os}}
