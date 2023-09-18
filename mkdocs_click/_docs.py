@@ -138,7 +138,7 @@ def _make_title_full_command_path(ctx: click.Context, depth: int) -> Iterator[st
     We do this because a TOC naturally conveys the hierarchy, whereas headings and permalinks should be namespaced to
     convey the hierarchy.
 
-    See: https://github.com/DataDog/mkdocs-click/issues/35
+    See: https://github.com/mkdocs/mkdocs-click/issues/35
     """
     text = ctx.command_path  # 'git commit'
     permalink = slugify(ctx.command_path, "-")  # 'git-commit'

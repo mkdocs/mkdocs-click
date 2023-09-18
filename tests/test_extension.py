@@ -110,7 +110,7 @@ def test_enhanced_titles():
     """
     If `attr_list` extension is registered, section titles are enhanced with full command paths.
 
-    See: https://github.com/DataDog/mkdocs-click/issues/35
+    See: https://github.com/mkdocs/mkdocs-click/issues/35
     """
     md = Markdown(extensions=["attr_list"])
     # Register our extension as a second step, so that we see `attr_list`.
