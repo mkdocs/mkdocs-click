@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+### Fixed
+
+- `:prog_name:` and other options can now contain multiple words (it used to stop at whitespace). (Pull #60)
+
 ## 0.8.0 - 2022-06-19
 
 ### Added
