@@ -4,11 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## 0.8.1 - 2023-09-18
 
 ### Fixed
 
 - `:prog_name:` and other options can now contain multiple words (it used to stop at whitespace). (Pull #60)
+- `::: mkdocs-click` directive is now recognized at the end of the file without needing an extra newline. (Pull #69)
+- Code blocks are marked as ```text so that HighlightJS doesn't try to highlight the "syntax" as some random language. (Pull #61)
 
 ## 0.8.0 - 2022-06-19
 
