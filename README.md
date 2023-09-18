@@ -6,6 +6,8 @@
 
 An MkDocs extension to generate documentation for Click command line applications.
 
+Originally developed by [DataDog](https://www.datadoghq.com/).
+
 ## Installation
 
 Install from PyPI:
