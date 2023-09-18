@@ -6,7 +6,7 @@
 
 An MkDocs extension to generate documentation for Click command line applications.
 
-Originally developed by [DataDog](https://www.datadoghq.com/).
+Originally developed by [Datadog](https://www.datadoghq.com).
 
 ## Installation
 
