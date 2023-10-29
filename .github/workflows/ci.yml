@@ -13,7 +13,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - python: '^3.11'
+          - python: '^3.12'
+            os: ubuntu-latest
+          - python: '3.12'
             os: macos-latest
           - python: '3.11'
             os: windows-latest
@@ -29,7 +31,7 @@ jobs:
     runs-on: ${{matrix.os}}
     steps:
       - name: Download source
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install Python
         uses: actions/setup-python@v4
         with:
@@ -51,11 +53,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download source
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: '3.12'
       - name: Install Hatch
         run: |
           pip install hatch
