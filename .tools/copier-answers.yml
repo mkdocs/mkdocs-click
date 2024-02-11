@@ -1,4 +1,4 @@
-_commit: 7d6f4ceea
+_commit: ed37f1413
 _src_path: gh:oprypin/py-project-template
 copyright_date: '2020'
 mkdocs: false
@@ -10,3 +10,4 @@ python_distribution_name: mkdocs-click
 python_source_path: mkdocs_click
 repository_name: mkdocs/mkdocs-redirects
 script_test: true
+

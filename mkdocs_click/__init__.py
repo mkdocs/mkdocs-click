@@ -5,4 +5,4 @@ from .__version__ import __version__
 from ._exceptions import MkDocsClickException
 from ._extension import MKClickExtension, makeExtension
 
-__all__ = ["__version__", "MKClickExtension", "MkDocsClickException", "makeExtension"]
+__all__ = ["MKClickExtension", "MkDocsClickException", "__version__", "makeExtension"]

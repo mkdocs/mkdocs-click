@@ -21,5 +21,5 @@ from mkdocs_click._loader import load_command
     ],
 )
 def test_load_command(module: str, command: str, exc):
-    with pytest.raises(exc) if exc is not None else nullcontext():  # type: ignore
+    with pytest.raises(exc) if exc is not None else nullcontext():
         load_command(module, command)
