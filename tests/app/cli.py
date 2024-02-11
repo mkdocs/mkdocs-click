@@ -56,7 +56,7 @@ class MultiCLI(click.MultiCommand):
 
     def get_command(self, ctx, name):
         cmds = {"foo": foo, "bar": bar}
-        return cmds.get(name, None)
+        return cmds.get(name)
 
 
 multi_named = MultiCLI(name="multi", help="Main entrypoint for this dummy program")
