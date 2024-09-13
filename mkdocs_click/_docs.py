@@ -92,8 +92,12 @@ def _recursively_make_command_docs(
 def _build_command_context(
     prog_name: str, command: click.Command, parent: click.Context | None
 ) -> click.Context:
-    return _get_context_class(command)(
-        cast(click.Command, command), info_name=prog_name, parent=parent
+    # https://github.com/pallets/click/blob/8.1.8/src/click/core.py#L859-L862
+    return command.context_class(command)(
+        cast(click.Command, command),
+        info_name=prog_name,
+        parent=parent,
+        **command.context_settings,
     )
 
 
@@ -366,11 +370,6 @@ def _make_subcommands_links(
             help_string = "*No description was provided with this command.*"
         yield f"- *{command_bullet}*: {help_string}"
     yield ""
-
-
-def _get_context_class(command: click.Command) -> type[click.Context]:
-    # https://github.com/pallets/click/blob/8.1.8/src/click/core.py#L859-L862
-    return command.context_class
 
 
 def _is_command_group(command: click.Command) -> bool:
