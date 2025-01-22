@@ -28,8 +28,9 @@ def replace_command_docs(has_attr_list: bool = False, **options: Any) -> Iterato
     remove_ascii_art = options.get("remove_ascii_art", False)
     show_hidden = options.get("show_hidden", False)
     list_subcommands = options.get("list_subcommands", False)
+    command_class = options.get("command_class", "click.BaseCommand")
 
-    command_obj = load_command(module, command)
+    command_obj = load_command(module, command, command_class)
 
     prog_name = prog_name or command_obj.name or command
 

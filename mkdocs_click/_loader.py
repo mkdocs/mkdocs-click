@@ -6,20 +6,18 @@ from __future__ import annotations
 import importlib
 from typing import Any
 
-import click
-
 from ._exceptions import MkDocsClickException
 
 
-def load_command(module: str, attribute: str) -> click.BaseCommand:
+def load_command(module: str, attribute: str, command_class: str = "click.BaseCommand") -> Any:
     """
     Load and return the Click command object located at '<module>:<attribute>'.
     """
     command = _load_obj(module, attribute)
 
-    if not isinstance(command, click.BaseCommand):
+    if not isinstance(command, _load_command_class(command_class)):
         raise MkDocsClickException(
-            f"{attribute!r} must be a 'click.BaseCommand' object, got {type(command)}"
+            f"{attribute!r} must be a '{command_class}' object, got {type(command)}"
         )
 
     return command
@@ -35,3 +33,11 @@ def _load_obj(module: str, attribute: str) -> Any:
         return getattr(mod, attribute)
     except AttributeError:
         raise MkDocsClickException(f"Module {module!r} has no attribute {attribute!r}")
+
+
+def _load_command_class(command_class: str) -> Any:
+    module, attribute = command_class.rsplit(".", 1)
+    try:
+        return _load_obj(module, attribute)
+    except ModuleNotFoundError:
+        raise MkDocsClickException(f"Could not import {module!r}")
