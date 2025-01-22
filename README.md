@@ -140,3 +140,4 @@ Options:
 - `show_hidden`: _(Optional, default: `False`)_ Show commands and options that are marked as hidden.
 - `list_subcommands`: _(Optional, default: `False`)_ List subcommands of a given command. If _attr_list_ is installed,
 add links to subcommands also.
+- `command_class`: _(Optional, default: `click.BaseCommand`)_ The class of the `command` option.
