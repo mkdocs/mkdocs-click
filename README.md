@@ -139,5 +139,5 @@ Options:
 - `remove_ascii_art`: _(Optional, default: `False`)_ When docstrings begin with the escape character `\b`, all text will be ignored until the next blank line is encountered.
 - `show_hidden`: _(Optional, default: `False`)_ Show commands and options that are marked as hidden.
 - `list_subcommands`: _(Optional, default: `False`)_ List subcommands of a given command. If _attr_list_ is installed,
-- `command_class`: _(Optional, default: `click.BaseCommand`)_ The class of the `command` option.
 add links to subcommands also.
+- `command_class`: _(Optional, default: `click.BaseCommand`)_ The class of the `command` option.
