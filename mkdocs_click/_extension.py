@@ -22,7 +22,7 @@ def replace_command_docs(has_attr_list: bool = False, **options: Any) -> Iterato
 
     module = options["module"]
     command = options["command"]
-    prog_name = options.get("prog_name", None)
+    prog_name = options.get("prog_name")
     depth = int(options.get("depth", 0))
     style = options.get("style", "plain")
     remove_ascii_art = options.get("remove_ascii_art", False)

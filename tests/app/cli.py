@@ -50,7 +50,7 @@ cli_named.add_command(bar)
 cli_named.add_command(hidden)
 
 
-class MultiCLI(click.MultiCommand):
+class GroupCLI(click.Group):
     def list_commands(self, ctx):
         return ["foo", "bar"]
 
@@ -59,5 +59,5 @@ class MultiCLI(click.MultiCommand):
         return cmds.get(name)
 
 
-multi_named = MultiCLI(name="multi", help="Main entrypoint for this dummy program")
-multi = MultiCLI(help="Main entrypoint for this dummy program")
+group_named = GroupCLI(name="group", help="Main entrypoint for this dummy program")
+group = GroupCLI(help="Main entrypoint for this dummy program")

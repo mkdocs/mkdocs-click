@@ -20,8 +20,8 @@ EXPECTED_SUB_ENHANCED = (Path(__file__).parent / "app" / "expected-sub-enhanced.
     [
         pytest.param("cli", "cli", id="cli-simple"),
         pytest.param("cli_named", "cli", id="cli-explicit-name"),
-        pytest.param("multi_named", "multi", id="multi-explicit-name"),
-        pytest.param("multi", "multi", id="no-name"),
+        pytest.param("group_named", "group", id="group-explicit-name"),
+        pytest.param("group", "group", id="no-name"),
     ],
 )
 def test_extension(command, expected_name):
@@ -133,8 +133,8 @@ def test_enhanced_titles():
     [
         pytest.param("cli", "cli", id="cli-simple"),
         pytest.param("cli_named", "cli", id="cli-explicit-name"),
-        pytest.param("multi_named", "multi", id="multi-explicit-name"),
-        pytest.param("multi", "multi", id="no-name"),
+        pytest.param("group_named", "group", id="group-explicit-name"),
+        pytest.param("group", "group", id="no-name"),
     ],
 )
 def test_extension_with_subcommand(command, expected_name):
@@ -162,8 +162,8 @@ def test_extension_with_subcommand(command, expected_name):
     [
         pytest.param("cli", "cli", id="cli-simple"),
         pytest.param("cli_named", "cli", id="cli-explicit-name"),
-        pytest.param("multi_named", "multi", id="multi-explicit-name"),
-        pytest.param("multi", "multi", id="no-name"),
+        pytest.param("group_named", "group", id="group-explicit-name"),
+        pytest.param("group", "group", id="no-name"),
     ],
 )
 def test_enhanced_titles_with_subcommand(command, expected_name):
