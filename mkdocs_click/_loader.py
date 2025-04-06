@@ -11,15 +11,15 @@ import click
 from ._exceptions import MkDocsClickException
 
 
-def load_command(module: str, attribute: str) -> click.BaseCommand:
+def load_command(module: str, attribute: str) -> click.Command:
     """
     Load and return the Click command object located at '<module>:<attribute>'.
     """
     command = _load_obj(module, attribute)
 
-    if not isinstance(command, click.BaseCommand):
+    if not (isinstance(command, click.Command) or hasattr(command, "context_class")):
         raise MkDocsClickException(
-            f"{attribute!r} must be a 'click.BaseCommand' object, got {type(command)}"
+            f"{attribute!r} must be a 'click.Command'-like object, got {type(command)}"
         )
 
     return command

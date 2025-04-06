@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+### Added
+
+- Add support for `click.Command`-like, `click.Group`-like and `click.Context`-like objects without requiring them to be actual subclasses. (Pull #82)
+
+### Fixed
+
+- Remove explicit reference to `click.BaseCommand` and `click.MultiCommand` objects in anticipation of their deprecation. (Pull #82)
+
 ## 0.8.1 - 2023-09-18
 
 ### Fixed

@@ -15,7 +15,7 @@ from ._exceptions import MkDocsClickException
 
 def make_command_docs(
     prog_name: str,
-    command: click.BaseCommand,
+    command: click.Command,
     depth: int = 0,
     style: str = "plain",
     remove_ascii_art: bool = False,
@@ -42,7 +42,7 @@ def make_command_docs(
 
 def _recursively_make_command_docs(
     prog_name: str,
-    command: click.BaseCommand,
+    command: click.Command,
     parent: click.Context | None = None,
     depth: int = 0,
     style: str = "plain",
@@ -90,19 +90,25 @@ def _recursively_make_command_docs(
 
 
 def _build_command_context(
-    prog_name: str, command: click.BaseCommand, parent: click.Context | None
+    prog_name: str, command: click.Command, parent: click.Context | None
 ) -> click.Context:
-    return click.Context(cast(click.Command, command), info_name=prog_name, parent=parent)
+    return _get_context_class(command)(
+        cast(click.Command, command), info_name=prog_name, parent=parent
+    )
 
 
-def _get_sub_commands(command: click.Command, ctx: click.Context) -> list[click.Command]:
+def _get_sub_commands(
+    command: click.Command | click.Group, ctx: click.Context
+) -> list[click.Command]:
     """Return subcommands of a Click command."""
     subcommands = getattr(command, "commands", {})
     if subcommands:
         return list(subcommands.values())
 
-    if not isinstance(command, click.MultiCommand):
+    if not _is_command_group(command):
         return []
+
+    command = cast(click.Group, command)
 
     subcommands = []
 
@@ -360,3 +366,13 @@ def _make_subcommands_links(
             help_string = "*No description was provided with this command.*"
         yield f"- *{command_bullet}*: {help_string}"
     yield ""
+
+
+def _get_context_class(command: click.Command) -> type[click.Context]:
+    # https://github.com/pallets/click/blob/8.1.8/src/click/core.py#L859-L862
+    return command.context_class
+
+
+def _is_command_group(command: click.Command) -> bool:
+    # https://github.com/pallets/click/blob/8.1.8/src/click/core.py#L1806-L1811
+    return isinstance(command, click.Group) or hasattr(command, "command_class")

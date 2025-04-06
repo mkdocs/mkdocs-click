@@ -175,7 +175,7 @@ def test_style_table(command, expected):
     assert output == expected
 
 
-class MultiCLI(click.MultiCommand):
+class GroupCLI(click.Group):
     def list_commands(self, ctx):
         return ["single-command"]
 
@@ -184,26 +184,26 @@ class MultiCLI(click.MultiCommand):
 
 
 @pytest.mark.parametrize(
-    "multi",
+    "group",
     [
-        pytest.param(MultiCLI("multi", help="Multi help"), id="explicit-name"),
-        pytest.param(MultiCLI(help="Multi help"), id="no-name"),
+        pytest.param(GroupCLI("group", help="Group help"), id="explicit-name"),
+        pytest.param(GroupCLI(help="Group help"), id="no-name"),
     ],
 )
-def test_custom_multicommand(multi):
+def test_custom_group(group):
     """
-    Custom `MultiCommand` objects are supported (i.e. not just `Group` multi-commands).
+    Custom `Group` objects are supported.
     """
     expected = dedent(
         """
-        # multi
+        # group
 
-        Multi help
+        Group help
 
         **Usage:**
 
         ```text
-        multi [OPTIONS] COMMAND [ARGS]...
+        group [OPTIONS] COMMAND [ARGS]...
         ```
 
         **Options:**
@@ -219,7 +219,7 @@ def test_custom_multicommand(multi):
         **Usage:**
 
         ```text
-        multi hello [OPTIONS]
+        group hello [OPTIONS]
         ```
 
         **Options:**
@@ -231,31 +231,31 @@ def test_custom_multicommand(multi):
         """
     ).lstrip()
 
-    output = "\n".join(make_command_docs("multi", multi))
+    output = "\n".join(make_command_docs("group", group))
     assert output == expected
 
 
 @pytest.mark.parametrize(
-    "multi",
+    "group",
     [
-        pytest.param(MultiCLI("multi", help="Multi help"), id="explicit-name"),
-        pytest.param(MultiCLI(help="Multi help"), id="no-name"),
+        pytest.param(GroupCLI("group", help="Group help"), id="explicit-name"),
+        pytest.param(GroupCLI(help="Group help"), id="no-name"),
     ],
 )
-def test_custom_multicommand_with_list_subcommands(multi):
+def test_custom_group_with_list_subcommands(group):
     """
-    Custom `MultiCommand` objects are supported (i.e. not just `Group` multi-commands).
+    Custom `Group` objects are supported.
     """
     expected = dedent(
         """
-        # multi
+        # group
 
-        Multi help
+        Group help
 
         **Usage:**
 
         ```text
-        multi [OPTIONS] COMMAND [ARGS]...
+        group [OPTIONS] COMMAND [ARGS]...
         ```
 
         **Options:**
@@ -275,7 +275,7 @@ def test_custom_multicommand_with_list_subcommands(multi):
         **Usage:**
 
         ```text
-        multi hello [OPTIONS]
+        group hello [OPTIONS]
         ```
 
         **Options:**
@@ -287,7 +287,7 @@ def test_custom_multicommand_with_list_subcommands(multi):
         """
     ).lstrip()
 
-    output = "\n".join(make_command_docs("multi", multi, list_subcommands=True))
+    output = "\n".join(make_command_docs("group", group, list_subcommands=True))
     assert output == expected
 
 
