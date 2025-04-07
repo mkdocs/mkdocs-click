@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Changed
+
+- Drop support for Python 3.8. (Pull #85)
+
 ### Added
 
 - Add support for `click.Command`-like, `click.Group`-like and `click.Context`-like objects without requiring them to be actual subclasses. (Pull #82)
