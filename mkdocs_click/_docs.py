@@ -5,12 +5,15 @@ from __future__ import annotations
 
 import inspect
 from contextlib import ExitStack, contextmanager
-from typing import Iterator, cast
+from typing import TYPE_CHECKING, cast
 
 import click
 from markdown.extensions.toc import slugify
 
 from ._exceptions import MkDocsClickException
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 def make_command_docs(

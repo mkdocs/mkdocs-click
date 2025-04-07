@@ -4,7 +4,10 @@
 from __future__ import annotations
 
 import re
-from typing import Callable, Iterable, Iterator
+from typing import TYPE_CHECKING, Callable
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable, Iterator
 
 
 def replace_blocks(

@@ -3,7 +3,7 @@
 # Licensed under the Apache license (see LICENSE)
 from __future__ import annotations
 
-from typing import Any, Iterator
+from typing import TYPE_CHECKING, Any
 
 from markdown.extensions import Extension
 from markdown.extensions.attr_list import AttrListExtension
@@ -13,6 +13,9 @@ from ._docs import make_command_docs
 from ._exceptions import MkDocsClickException
 from ._loader import load_command
 from ._processing import replace_blocks
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 def replace_command_docs(has_attr_list: bool = False, **options: Any) -> Iterator[str]:
