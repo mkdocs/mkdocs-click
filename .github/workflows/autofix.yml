@@ -26,4 +26,4 @@ jobs:
           git diff --color --exit-code
       - name: Apply automatic fixes using pre-commit-ci-lite
         if: failure() && github.event_name == 'pull_request'
-        uses: pre-commit-ci/lite-action@v1.0.1
+        uses: pre-commit-ci/lite-action@v1.1.0
