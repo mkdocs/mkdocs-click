@@ -93,7 +93,7 @@ def _build_command_context(
     prog_name: str, command: click.Command, parent: click.Context | None
 ) -> click.Context:
     # https://github.com/pallets/click/blob/8.1.8/src/click/core.py#L859-L862
-    return command.context_class(command)(
+    return command.context_class(
         cast(click.Command, command),
         info_name=prog_name,
         parent=parent,
