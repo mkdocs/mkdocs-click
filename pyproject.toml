@@ -69,8 +69,12 @@ dependencies = [
 ]
 [tool.hatch.envs.test.scripts]
 test = [
-    "pytest -q {args}",
+    "pytest {args}",
     "bash .tools/test.sh {args}",
+]
+[tool.hatch.envs.test.overrides]
+platform.windows.scripts = [
+    { key = "test", value = "pytest {args}" },
 ]
 
 [tool.hatch.envs.types]

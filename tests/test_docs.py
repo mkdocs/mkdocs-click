@@ -42,6 +42,13 @@ def hello_ascii_art():
     """
 
 
+@click.command(context_settings={"help_option_names": []})
+def hello_no_options():
+    """
+    Hello, world!
+    """
+
+
 HELLO_EXPECTED = dedent(
     """
     # hello
@@ -59,6 +66,21 @@ HELLO_EXPECTED = dedent(
     ```text
       -d, --debug TEXT  Include debug output
       --help            Show this message and exit.
+    ```
+    """
+).lstrip()
+
+
+HELLO_EXPECTED_NO_OPTIONS = dedent(
+    """
+    # hello
+
+    Hello, world!
+
+    **Usage:**
+
+    ```text
+    hello [OPTIONS]
     ```
     """
 ).lstrip()
@@ -95,6 +117,11 @@ def test_basic_escape_marker():
 def test_basic_ascii_art():
     output = "\n".join(make_command_docs("hello", hello_ascii_art, remove_ascii_art=True))
     assert output == HELLO_EXPECTED
+
+
+def test_basic_no_options():
+    output = "\n".join(make_command_docs("hello", hello_no_options))
+    assert output == HELLO_EXPECTED_NO_OPTIONS
 
 
 @click.command()

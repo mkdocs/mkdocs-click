@@ -252,9 +252,10 @@ def _make_plain_options(ctx: click.Context, show_hidden: bool = False) -> Iterat
         # First line is redundant "Options"
         option_lines = option_lines[1:]
 
-        if not option_lines:  # pragma: no cover
-            # We expect at least `--help` to be present.
-            raise RuntimeError("Expected at least one option")
+        # It's possible to define a command with no options, especially common when
+        # forwarding arguments to an external process.
+        if not option_lines:
+            return
 
         yield "**Options:**"
         yield ""
@@ -335,6 +336,12 @@ def _make_table_options(ctx: click.Context, show_hidden: bool = False) -> Iterat
 
     options = [param for param in ctx.command.get_params(ctx) if isinstance(param, click.Option)]
     options = [option for option in options if not option.hidden or show_hidden]
+
+    # It's possible to define a command with no options, especially common when
+    # forwarding arguments to an external process.
+    if not options:
+        return
+
     option_rows = [_format_table_option_row(option) for option in options]
 
     yield "**Options:**"
