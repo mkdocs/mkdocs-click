@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Remove explicit reference to `click.BaseCommand` and `click.MultiCommand` objects in anticipation of their deprecation. (Pull #82)
 - Properly ensure whitespace is trimmed from the usage string. (Pull #83)
 - Propagate `context_settings` to `click.Context`-like objects. (Pull #79)
+- Allow commands with no options. (Pull #84)
 
 ## 0.8.1 - 2023-09-18
 
