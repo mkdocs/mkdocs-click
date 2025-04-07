@@ -193,7 +193,7 @@ def _make_usage(ctx: click.Context) -> Iterator[str]:
     formatter = ctx.make_formatter()
     pieces = ctx.command.collect_usage_pieces(ctx)
     formatter.write_usage(ctx.command_path, " ".join(pieces), prefix="")
-    usage = formatter.getvalue().rstrip("\n")
+    usage = formatter.getvalue().strip()
 
     yield "**Usage:**"
     yield ""
