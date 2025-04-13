@@ -110,6 +110,8 @@ markdown_extensions:
     - mkdocs-click
 ```
 
+Note: mind the order, `attr_list` should be above `mkdocs-click`, otherwise the feature does not work.
+
 `mkdocs-click` will then output the full command path in headers (e.g. `## cli build all`) and permalinks (e.g. `#cli-build-all`).
 
 Note that the table of content (TOC) will still use the command name: the TOC is naturally hierarchal, so full command paths would be redundant. (This exception is why the `attr_list` extension is required.)
