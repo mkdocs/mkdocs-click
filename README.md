@@ -110,7 +110,7 @@ markdown_extensions:
     - mkdocs-click
 ```
 
-Note: mind the order, `attr_list` should be above `mkdocs-click`, otherwise the feature does not work.
+***IMPORTANT:*** `attr_list` must come before `mkdocs-click` for this to work.
 
 `mkdocs-click` will then output the full command path in headers (e.g. `## cli build all`) and permalinks (e.g. `#cli-build-all`).
 
