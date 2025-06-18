@@ -174,6 +174,10 @@ def _make_description(ctx: click.Context, remove_ascii_art: bool = False) -> Ite
     # https://github.com/pallets/click/pull/2151
     help_string = inspect.cleandoc(help_string)
 
+    # Skip rest of the description if the `\f` marker is found as per Click's documentation.
+    # https://click.palletsprojects.com/en/stable/documentation/#truncating-help-texts
+    help_string = help_string.partition("\f")[0]
+
     if not remove_ascii_art:
         yield from help_string.splitlines()
         yield ""

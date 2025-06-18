@@ -28,6 +28,27 @@ def hello_escape_marker():
 
 @click.command()
 @click.option("-d", "--debug", help="Include debug output")
+def hello_truncating_escape_marker():
+    """
+    Hello, world!\f
+
+    Hidden world.
+    """
+
+
+@click.command()
+@click.option("-d", "--debug", help="Include debug output")
+def hello_truncating_escape_marker_on_new_line():
+    """
+    Hello, world!
+    \f
+
+    Hidden world.
+    """
+
+
+@click.command()
+@click.option("-d", "--debug", help="Include debug output")
 def hello_ascii_art():
     """
     \b
@@ -111,6 +132,16 @@ def test_style_invalid():
 
 def test_basic_escape_marker():
     output = "\n".join(make_command_docs("hello", hello_escape_marker))
+    assert output == HELLO_EXPECTED
+
+
+def test_truncating_escape_marker():
+    output = "\n".join(make_command_docs("hello", hello_truncating_escape_marker))
+    assert output == HELLO_EXPECTED
+
+
+def test_truncating_escape_marker_on_new_line():
+    output = "\n".join(make_command_docs("hello", hello_truncating_escape_marker_on_new_line))
     assert output == HELLO_EXPECTED
 
 
