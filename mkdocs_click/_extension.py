@@ -31,6 +31,7 @@ def replace_command_docs(has_attr_list: bool = False, **options: Any) -> Iterato
     remove_ascii_art = options.get("remove_ascii_art", False)
     show_hidden = options.get("show_hidden", False)
     list_subcommands = options.get("list_subcommands", False)
+    no_subcommands = options.get("no_subcommands", False)
 
     command_obj = load_command(module, command)
 
@@ -45,6 +46,7 @@ def replace_command_docs(has_attr_list: bool = False, **options: Any) -> Iterato
         show_hidden=show_hidden,
         list_subcommands=list_subcommands,
         has_attr_list=has_attr_list,
+        no_subcommands=no_subcommands,
     )
 
 

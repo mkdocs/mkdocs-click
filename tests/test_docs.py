@@ -407,3 +407,35 @@ def test_show_options():
 
     assert opt_hidden.hidden
     assert not opt_normal.hidden
+
+
+def test_no_subcommands():
+    @click.group()
+    def _test_group(name="group"):
+        """Test group."""
+
+    @_test_group.command(name="hello")
+    def _test_cmd():
+        """Test cmd."""
+
+    expected = dedent(
+        """
+        # group
+
+        Test group.
+
+        **Usage:**
+
+        ```text
+        group [OPTIONS] COMMAND [ARGS]...
+        ```
+
+        **Options:**
+
+        ```text
+          --help  Show this message and exit.
+        ```
+        """
+    ).lstrip()
+    output = "\n".join(make_command_docs("group", _test_group, no_subcommands=True))
+    assert output == expected
