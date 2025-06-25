@@ -142,3 +142,4 @@ Options:
 - `show_hidden`: _(Optional, default: `False`)_ Show commands and options that are marked as hidden.
 - `list_subcommands`: _(Optional, default: `False`)_ List subcommands of a given command. If _attr_list_ is installed,
 add links to subcommands also.
+- `no_subcommands`: _(Optional, default: `False`)_ Whether subcommands should also be shown.
