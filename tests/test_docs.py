@@ -407,3 +407,18 @@ def test_show_options():
 
     assert opt_hidden.hidden
     assert not opt_normal.hidden
+
+
+@click.command()
+@click.option("--mode", help="Pick a|b mode.")
+def hello_pipe_help():
+    """Hello, world!"""
+
+
+def test_style_table_escapes_pipe_in_help():
+    output = "\n".join(make_command_docs("hello", hello_pipe_help, style="table"))
+    assert "Pick a&#x7C;b mode." in output
+    assert "Pick a|b mode." not in output
+    for line in output.splitlines():
+        if line.startswith("| `--mode`"):
+            assert line.count("|") == 5

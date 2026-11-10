@@ -328,7 +328,9 @@ def _format_table_option_row(option: click.Option) -> str:
     value_type = _format_table_option_type(option)
 
     # -> "Show version info."
-    description = option.help if option.help is not None else "N/A"
+    # Escape pipes so a "|" in help text cannot split the table into
+    # extra columns (same HTML entity already used for Choice options).
+    description = (option.help if option.help is not None else "N/A").replace("|", _HTML_PIPE)
 
     # -> `False`
     none_default_msg = "_required" if option.required else "None"
